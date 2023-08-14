@@ -68,8 +68,6 @@ export const authSignUpUser = ({ email, password,nickName }) =>
 
 
 
-
-
 // export const authSignUpUser = ({ email, password, nickname }) => async (
 //   dispatch,
 //   getState

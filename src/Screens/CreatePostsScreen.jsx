@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { Camera, CameraType } from "expo-camera";
 import { SimpleLineIcons } from "@expo/vector-icons";
@@ -24,6 +25,22 @@ const CreatePostsScreen = ({ navigation }) => {
     const location = await Location.getCurrentPositionAsync();
     console.log(location)
     setPhoto(uri);
+  };
+
+
+  const choosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
 
@@ -90,7 +107,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const sendPhoto = () => {
     uploadPhotoToServer()
-    navigation.navigate("Home", { photo });
+    navigation.navigate("Posts", { photo });
   };
 
 
@@ -113,7 +130,7 @@ const CreatePostsScreen = ({ navigation }) => {
         </TouchableOpacity>
       </Camera>
       <TouchableOpacity 
-      // onPress={choosePhoto}
+      onPress={choosePhoto}
       >
       <Text style={styles.text}>Завантажте фото</Text>
       </TouchableOpacity>

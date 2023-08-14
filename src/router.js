@@ -35,7 +35,7 @@ export const useRoute = (isLogin) => {
 <Tab.Navigator  screenOptions = {{tabBarShowLabel: false}} >
 <Tab.Screen name="Posts"  options={{tabBarIcon: ({focused, size,  color})=> <AntDesign name="appstore-o" size={size} color={color} /> }} component={PostsScreen} />
 <Tab.Screen name="CreatePosts" options={{tabBarIcon: ({focused, size, color})=> <AntDesign name="plus" size={size} color={color} /> }} component={CreatePostsScreen} />
-<Tab.Screen name="Profile" options={{tabBarIcon: ({focused, size, color})=> <AntDesign name="user" size={size} color={color} /> }} component={ProfileScreen} />
+<Tab.Screen name="Profile" options={{ headerShown: false, tabBarIcon: ({focused, size, color})=> <AntDesign name="user" size={size} color={color} /> }} component={ProfileScreen} />
 </Tab.Navigator>
 
   )

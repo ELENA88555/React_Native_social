@@ -8,7 +8,7 @@ import {
 
 const ImageBackgroundScreen = ({children}) => {
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    // <TouchableWithoutFeedback onPress={Keyboard.dismiss()}>
       <View style={styles.container}>
         <ImageBackground
           source={require("../images/PhotoBG.png")}
@@ -18,13 +18,13 @@ const ImageBackgroundScreen = ({children}) => {
           {children}
         </ImageBackground>
       </View>
-    </TouchableWithoutFeedback>
+    // </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // width: "100%",
+    width: "100%",
     // position: "absolute",
     flex: 1,
   },
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
 
     flex: 1,
     justifyContent: "flex-end",
+        // position: "absolute",
   },
 });
 

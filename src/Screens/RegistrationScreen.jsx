@@ -1,6 +1,6 @@
 import { useState } from "react";
 import React from "react";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
@@ -18,12 +18,13 @@ import {
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import ImageBackgroundScreen from "../components/ImageBackground";
-import {authSignUpUser } from "../redux/auth/authOperations";
+import { authSignUpUser } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTogglePasswordVisibility } from "../../hooks/useTogglePasswordVisibility";
 import Ionicons from "react-native-vector-icons/Ionicons";
-// import {Dimensions} from 'react-native';
+import { Dimensions } from "react-native";
+import { useEffect } from "react";
 
 const initiatState = {
   login: "",
@@ -38,11 +39,25 @@ const initiatState = {
 const Registration = ({ navigation }) => {
   const [image, setImage] = useState(null);
 
-const { passwordVisibility, rightIcon, handlePasswordVisibility } =
-useTogglePasswordVisibility();
-const [password, setPassword] = useState('');
+  const { passwordVisibility, rightIcon, handlePasswordVisibility } =
+    useTogglePasswordVisibility();
+  const [password, setPassword] = useState("");
 
+  const [dimensions, setdimensions] = useState(
+    Dimensions.get("window").width - 20 * 2
+  );
 
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width - 20 * 2;
+      setdimensions(width);
+    };
+    Dimensions.addEventListener("change", onChange);
+
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
   // const [fontReady, setFontReady] = useState(false);
 
   // if (!fontReady) {
@@ -84,36 +99,31 @@ const [password, setPassword] = useState('');
       setImage(result.assets[0].uri);
     }
   };
-    
 
-
-  return (  
+  return (
     <ImageBackgroundScreen>
       <SafeAreaView>
         <View style={styles.mainFoto}>
           <View style={styles.addFoto}>
-          { image && (
-                 <Image source={{ uri: image }} style={styles.image} />
-                )}
-          <TouchableOpacity
-          onPress={takePhoto}
-              >
-                <Ionicons
-                    name={
-                      image ? "close-circle-outline" : "add-circle-outline"
-                    }
-                    size={32}
-                    color="#FF6C00"
-                    style={styles.addImage}
-                  />
-     </TouchableOpacity>
-     
+            {image && <Image source={{ uri: image }} style={styles.image} />}
+            <TouchableOpacity onPress={takePhoto}>
+              <Ionicons
+                name={image ? "close-circle-outline" : "add-circle-outline"}
+                size={32}
+                color="#FF6C00"
+                style={styles.addImage}
+              />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.containerForm}>
           <Text style={styles.text}>Реєстрація</Text>
           <View
-            style={{ ...styles.form, marginBottom: isShowKeyBoard ? 10 : 20 }}
+            style={{
+              ...styles.form,
+              marginBottom: isShowKeyBoard ? 10 : 20,
+              width: dimensions,
+            }}
           >
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -156,15 +166,16 @@ const [password, setPassword] = useState('');
                 keyboardType="numeric"
                 secureTextEntry={passwordVisibility}
                 onFocus={() => {
-                  setIsShowKeyBoard(true);  
+                  setIsShowKeyBoard(true);
                 }}
               />
-               <Pressable onPress={handlePasswordVisibility}>
-               {/* <Text style={styles.showHidePass}>Показати</Text> */}
- <MaterialCommunityIcons style={styles.showHidePass} name={rightIcon} size={24}  />
-
- </Pressable>
-             
+              <Pressable onPress={handlePasswordVisibility}>
+                <MaterialCommunityIcons
+                  style={styles.showHidePass}
+                  name={rightIcon}
+                  size={24}
+                />
+              </Pressable>
             </KeyboardAvoidingView>
 
             <TouchableOpacity
@@ -186,18 +197,8 @@ const [password, setPassword] = useState('');
                 </Text>
               </TouchableOpacity>
 
-              {/* <Button
-                title="Вже є акаунт? Увійти"
-                onPress={() => navigation.navigate("LoginScreen")}
-                color="#1B4371"
-              /> */}
-              {/* <Text style={styles.textRegistration} >
-        Вже є акаунт? Увійти
-        </Text> */}
             </View>
-            {/* <Button style={styles.button} 
-       title="Зареєстуватися"
-       color = '#FF6C00'/> */}
+
           </View>
         </View>
       </SafeAreaView>
@@ -210,8 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-
-    // marginBottom:0,
   },
 
   form: {
@@ -287,8 +286,6 @@ const styles = StyleSheet.create({
     // left: "30%",
     // width: 120,
     // height: 120,
-   
-   
   },
   addImage: {
     zIndex: 999,
@@ -310,7 +307,7 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 16,
     transform: [{ translateY: -4 }],
-      color: "#888d94",
+    color: "#888d94",
   },
   image: {
     position: "absolute",
