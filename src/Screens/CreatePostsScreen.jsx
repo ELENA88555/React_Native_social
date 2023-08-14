@@ -24,6 +24,8 @@ const CreatePostsScreen = ({ navigation }) => {
     const {uri} = await camera.takePictureAsync();
     const location = await Location.getCurrentPositionAsync();
     console.log(location)
+    console.log(location.coords.latitude)
+    console.log(location.coords.longitude)
     setPhoto(uri);
   };
 
