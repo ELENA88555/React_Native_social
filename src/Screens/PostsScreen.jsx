@@ -22,14 +22,6 @@ const PostsScreen = () => {
 
 export default  PostsScreen
 
-
-
-
-
-
-
-
-
 // import { SimpleLineIcons } from "@expo/vector-icons";
 // import React, { useEffect, useState } from "react";
 // import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";

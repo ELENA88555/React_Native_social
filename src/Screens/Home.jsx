@@ -31,12 +31,17 @@
 import { SimpleLineIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
-
+import { Ionicons } from '@expo/vector-icons';
+import { authSingOutUser } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 
 const Home = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
 
+  const dispatch = useDispatch()
+
+  
 
   useEffect(() => {
     if (route.params) {
@@ -45,8 +50,21 @@ const Home = ({ route, navigation }) => {
   }, [route.params]);
 
 
+  const signOut = ()=> {
+    dispatch(authSingOutUser())
+  }
+
   return (
     <View style={styles.container}>
+
+
+      <TouchableOpacity
+          onPress={signOut}
+          style={styles.logOutBtn}
+        >
+       <Ionicons name="log-out-outline" size={24} color="gray" />
+      </TouchableOpacity>
+
       <FlatList
         data={posts}
         keyExtractor={(item, indx) => item + indx.toString()}
@@ -64,19 +82,19 @@ const Home = ({ route, navigation }) => {
         // )}
 
       />
-              <TouchableOpacity
+              {/* <TouchableOpacity
           activeOpacity={0.7}
           onPress={()=> navigation.navigate("Map")}
           style={styles.location}
         >
           <SimpleLineIcons name="location-pin" size={24} color="gray" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={()=> navigation.navigate("Coments")}
           style={styles.location}
         >
-          <SimpleLineIcons name="location-pin" size={24} color="gray" />
+          {/* <SimpleLineIcons name="location-pin" size={24} color="gray" /> */}
         </TouchableOpacity>
     </View>
   );
@@ -87,6 +105,11 @@ const styles = StyleSheet.create({
     flex: 1,
     // alignItems: "center",
     justifyContent: "center",
+  },
+  logOutBtn: {
+    position: "absolute",
+    top: 6,
+    left: 358,
   },
 });
 
