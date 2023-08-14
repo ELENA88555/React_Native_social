@@ -107,7 +107,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const sendPhoto = () => {
     uploadPhotoToServer()
-    navigation.navigate("Posts", { photo });
+    navigation.navigate("Home", { photo });
   };
 
 

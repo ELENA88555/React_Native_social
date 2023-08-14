@@ -13,7 +13,7 @@ const StackNav = createStackNavigator(); // вказує на групу нав�
 const PostsScreen = () => {
   return (
       <StackNav.Navigator > 
-        <StackNav.Screen name="Home"  component={Home} />
+        <StackNav.Screen name="Home" options={{headerShown: false}}  component={Home} />
       <StackNav.Screen name="Map" options={{headerShown: false}} component={MapScreen} />
        <StackNav.Screen name="Coments" options={{headerShown: false}}  component={ComentsScreen} />
       </StackNav.Navigator> 
