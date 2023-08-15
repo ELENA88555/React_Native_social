@@ -13,6 +13,7 @@ import { collection, addDoc } from "firebase/firestore";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
+  const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -112,11 +113,26 @@ const CreatePostsScreen = ({ navigation }) => {
     navigation.navigate("Home", { photo });
   };
 
+  const disabledButton =name === "" || photo === null 
 
+  const clearPosts = () => {
+    setPhoto(null);
+    setLocation("");
+    setName("");
+  };
 
 
   return (
     <View style={styles.container}>
+        <View style={styles.headerContainer}>
+       <Text style={styles.header}>Create new post</Text>
+                <TouchableOpacity
+            style={styles.goBack}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" size={24} />
+          </TouchableOpacity>
+          </View>
       <Camera ref={setCamera} style={styles.camera}>
         {photo && (
           <View style={styles.containerPhoto}>
@@ -134,12 +150,13 @@ const CreatePostsScreen = ({ navigation }) => {
       <TouchableOpacity 
       onPress={choosePhoto}
       >
-      <Text style={styles.text}>Завантажте фото</Text>
+      <Text style={styles.text}>Upload a photo</Text>
       </TouchableOpacity>
       <View style={styles.containerInput}>
         <TextInput
+        //  value={name}
           style={styles.input}
-          placeholder="Назва..."
+          placeholder="Name..."
           keyboardType="default"
         />
 
@@ -154,18 +171,41 @@ const CreatePostsScreen = ({ navigation }) => {
         <TextInput
           dataDetectorTypes={"address"}
           style={styles.input}
-          placeholder="Місцевість..."
+          placeholder="Locality..."
           keyboardType="default"
         />
        </View>
 
       <TouchableOpacity
         activeOpacity={0.8}
-        style={styles.button}
+        // disabled={disabledButton}
+        style={
+          !disabledButton ? styles.button : styles.disabledButton
+        }
+        
         onPress={sendPhoto}
       >
-        <Text style={styles.textOnBtn}>Опубліковати</Text>
+                     <Text
+                style={
+                  !disabledButton
+                    ? styles.buttonText
+                    : styles.disabledButtonText
+                }
+              >
+                Publish
+              </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+            onPress={clearPosts}
+            style={styles.clearButton}
+          >
+            <Ionicons
+              name="trash-outline"
+              size={24}
+              color="#DADADA"
+              style={styles.icon}
+            />
+          </TouchableOpacity>
     </View>
   );
 };
@@ -175,6 +215,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flex: 1,
     backgroundColor: "#ffffff",
+  },
+  headerContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.3)",
+    paddingTop: 45,
+    paddingBottom: 11,
+
+    backgroundColor: "#FFFFFF",
   },
   camera: {
     height: "40%",
@@ -214,14 +262,26 @@ const styles = StyleSheet.create({
     height: "90%",
     width: "90%",
   },
-
-  textOnBtn: {
-    fontSize: 16,
-    lineHeight: 19,
-    fontWeight: 400,
-    color: "#BDBDBD",
+  goBack: {
+    position: "absolute",
+    bottom: 10,
+    left: 20,
+  },
+  header: {
+    textAlign: "center",
+    fontSize: 17,
+    lineHeight: 22,
+    letterSpacing: -0.408,
+    color: "#212121",
   },
 
+  textOnBtn: {
+    lineHeight: 19,
+    marginTop: 32,
+    paddingVertical: 16,
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+  },
   text: {
     fontWeight: 400,
     fontSize: 16,
@@ -239,7 +299,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#E8E8E8",
   },
-  button: {
+  disabledButton: {
     justifyContent: "center",
     marginTop: 22,
     alignItems: "center",
@@ -248,25 +308,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     marginTop: 23,
     borderWidth: 1,
-    
     borderColor: "transparent",
   },
 
-  submitButton: {
+  button: {
     marginTop: 32,
     paddingVertical: 16,
-    borderRadius: 100,
     backgroundColor: "#FF6C00",
   },
-
-
-  disabledButton: {
-    marginTop: 32,
-    paddingVertical: 16,
-    borderRadius: 100,
-    backgroundColor: "#F6F6F6",
-  },
-
   location: {
     zIndex: 999,
     position: "absolute",
@@ -276,7 +325,37 @@ const styles = StyleSheet.create({
 
 // position: "absolute",
 
-  }
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    textAlign: "center",
+    fontSize: 14,
+
+  },
+
+  disabledButtonText: {
+    color: "#BDBDBD",
+    textAlign: "center",
+    fontSize: 14,
+  },
+  clearButton: {
+    position: "absolute",
+    // justifyContent: "center",
+    // alignItems: "center",
+    width: 80,
+    height: 40,
+    bottom: 4,
+    left: "50%",
+    transform: [{ translateX: -0.3 * 70 }],
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+  },
+  icon: {
+    position: "absolute",
+    bottom: "50%",
+    left: "50%",
+    transform: [{ translateY: 0.5 * 25 }, { translateX: -0.5 * 25 }],
+  },
 
 });
 
