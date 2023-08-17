@@ -8,6 +8,7 @@ import LoginScreen from "./Screens/LoginScreen";
 import PostsScreen from "./Screens/PostsScreen";
 import CreatePostsScreen from "./Screens/CreatePostsScreen";
 import ProfileScreen from "./Screens/ProfileScreen";
+import { View, StyleSheet } from "react-native";
 
 const Stack = createStackNavigator(); // вказує на групу навігаторів
 const Tab = createBottomTabNavigator();
@@ -33,9 +34,35 @@ export const useRoute = (isLogin) => {
     // initialRouteName="Registration"  
   }
   return (
-<Tab.Navigator  screenOptions = {{tabBarShowLabel: false}} >
+    <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        // let iconName
+
+        // if (route.name === 'Home') {
+        //   iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline'
+        // } else if (route.name === 'CreatePosts') {
+        //   iconName = focused && 'trash-outline' 
+        // }
+
+     
+        // return <Ionicons name={iconName} size={size} color={color} />
+      },
+      tabBarShowLabel: false,
+      tabBarActiveTintColor: 'tomato',
+      tabBarInactiveTintColor: 'gray'
+    })}
+  >
 <Tab.Screen name="Posts"  options={{tabBarShowLabel: false, headerShown: false,tabBarIcon: ({focused, size,  color})=> <AntDesign name="appstore-o" size={size} color={color} /> }} component={PostsScreen} />
-<Tab.Screen name="CreatePosts" options={{headerShown: false,tabBarIcon: ({focused, size, color})=> <AntDesign name="plus" size={size} color={color} /> }} component={CreatePostsScreen} />
+<Tab.Screen name="CreatePosts"
+ options={{headerShown: false, tabBarShowLabel: false,
+  tabBarIcon: ({focused, size, color, name})=> 
+
+  <View style={styles.containerForm} >
+ <AntDesign style={styles.plus} name={focused ? "delete" : "plus"} size={30} color={color} />
+  </View>
+   }}
+   component={CreatePostsScreen} />
 <Tab.Screen name="Profile" options={{ headerShown: false, tabBarIcon: ({focused, size, color})=> <AntDesign name="user" size={size} color={color} /> }} component={ProfileScreen} />
 </Tab.Navigator>
 
@@ -43,7 +70,30 @@ export const useRoute = (isLogin) => {
 
 }
 
+const styles = StyleSheet.create({
+  containerForm: {
+// flex: 1,
+height: 40,
+width: 70,
+// borderWidth: 1,
+// padding: 12,
+borderRadius: 20,
+backgroundColor: "#FF6C00",
+justifyContent: "center",
+alignItems: "center",
 
+  },
+  plus: {
+    // flex: 1,
+    color: "#fff",
+    alignItems: "center",
+    // justifyContent: "center",
+
+
+  }
+
+
+});
 // const App = () => {
 // const routing = useRoute(true)
 
@@ -53,3 +103,4 @@ export const useRoute = (isLogin) => {
 //     </NavigationContainer>
 //   );
 // };
+

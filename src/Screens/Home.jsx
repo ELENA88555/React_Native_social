@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
 
-const Home = ({ route, navigation }) => {
+const Home = ({ route, navigation, }) => {
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
   // const navigation = useNavigation();
@@ -40,7 +40,9 @@ const Home = ({ route, navigation }) => {
             <Ionicons name="log-out-outline" size={24} color="gray" />
           </TouchableOpacity>
         </View>
-
+        <View style={styles.addFoto}>
+              <Image style={styles.image} source={{ uri: userPhoto }} />
+         </View>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => item + indx.toString()}
@@ -99,6 +101,31 @@ const styles = StyleSheet.create({
     paddingTop: 45,
     paddingBottom: 10,
     backgroundColor: "#FFFFFF",
+  },
+  addPhoto:{
+    // flex: 1,
+    alignItems: "center",
+    textAlign: "center",
+    justifyContent: "center",
+    width: 60,
+    height: 60,
+    // backgroundColor: "#763a3a",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor:"#763a3a",
+    enum: "absolute",
+    // position: "absolute",
+    // enum: 'relative',
+    top: 60,
+    left: 128,
+    zIndex: 1,
+    overflow: "hidden",
+},
+  image: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
   },
 
   signOut: {

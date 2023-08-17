@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 // import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import {
@@ -22,7 +22,6 @@ import { useTogglePasswordVisibility } from "../../hooks/useTogglePasswordVisibi
 import { authSingIn } from "../redux/auth/authOperations";
 import { Pressable } from "react-native";
 
-
 const initiatState = {
   // login: "",
   email: "",
@@ -33,12 +32,12 @@ const initiatState = {
 //   await Font.loadAsync({ Roboto: require("./src/fonts/Roboto-Italic.ttf") });
 // };
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
-useTogglePasswordVisibility();
-const [password, setPassword] = useState('');
+    useTogglePasswordVisibility();
+  const [password, setPassword] = useState("");
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   // const [fontReady, setFontReady] = useState(false);
 
   // if (!fontReady) {
@@ -59,92 +58,95 @@ const [password, setPassword] = useState('');
   const [isShowKeyBoard, setIsShowKeyBoard] = useState(false);
 
   const handleSubmit = () => {
-
     setIsShowKeyBoard(false);
     Keyboard.dismiss();
     setState(initiatState);
-    dispatch(authSingIn(state))
+    dispatch(authSingIn(state));
   };
 
   return (
     <ImageBackgroundScreen>
-    <SafeAreaView>
-      <View style={styles.containerForm}>
-        <Text style={styles.text}>Увійти</Text>
-        <View
-          style={{ ...styles.form, marginBottom: isShowKeyBoard ? 10 : 20 }}
-        >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <SafeAreaView>
+        <View style={styles.containerForm}>
+          <Text style={styles.text}>Увійти</Text>
+          <View
+            style={{ ...styles.form, marginBottom: isShowKeyBoard ? 10 : 20 }}
           >
- 
-            <TextInput
-              style={styles.input}
-              onChangeText={(value) =>
-                setState((prevState) => ({ ...prevState, email: value }))
-              }
-              value={state.email}
-              placeholder="Адреса електронної пошти"
-              autoComplete="email"
-              onFocus={() => {
-                setIsShowKeyBoard(true);
-              }}
-              
-              keyboardType="email-address"
-              importantForAutofill = {"yes"}
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={(value) =>
-                setState((prevState) => ({ ...prevState, password: value }))
-              }
-              value={state.password}
-              placeholder="Пароль"
-              keyboardType="numeric"
-              secureTextEntry={true}
-              onFocus={() => {
-                setIsShowKeyBoard(true);
-              }}
-              
-            />
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+              <TextInput
+                style={styles.input}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, email: value }))
+                }
+                value={state.email}
+                placeholder="Адреса електронної пошти"
+                autoComplete="email"
+                onFocus={() => {
+                  setIsShowKeyBoard(true);
+                }}
+                keyboardType="email-address"
+                importantForAutofill={"yes"}
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={(value) =>
+                  setState((prevState) => ({ ...prevState, password: value }))
+                }
+                value={state.password}
+                placeholder="Пароль"
+                keyboardType="numeric"
+                secureTextEntry={true}
+                onFocus={() => {
+                  setIsShowKeyBoard(true);
+                }}
+              />
 
-<Pressable
- onPress={handlePasswordVisibility}>
-               {/* <Text style={styles.showHidePass}>Показати</Text> */}
- <MaterialCommunityIcons style={styles.showHidePass} name={rightIcon} size={24}  />
+              <Pressable onPress={handlePasswordVisibility}>
+                {/* <Text style={styles.showHidePass}>Показати</Text> */}
+                <MaterialCommunityIcons
+                  style={styles.showHidePass}
+                  name={rightIcon}
+                  size={24}
+                />
+              </Pressable>
+            </KeyboardAvoidingView>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.button}
+              onPress={handleSubmit}
+            >
+              <Text style={styles.textOnBtn}>Увійти</Text>
+            </TouchableOpacity>
+            <View>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={styles.textRegistration}
+                onPress={() => navigation.navigate("Registration")}
+              >
+                <Text style={styles.textRegistration}>
+                  {" "}
+                  Немає акаунту? Зареєструватися
+                </Text>
+              </TouchableOpacity>
 
- </Pressable>
-          </KeyboardAvoidingView>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={styles.button}
-            onPress={handleSubmit}
-          >
-            <Text style={styles.textOnBtn}>Увійти</Text>
-          </TouchableOpacity>
-          <View>
-            <TouchableOpacity activeOpacity={0.9} style={styles.textRegistration}  onPress={() => navigation.navigate("Registration")}>
-        <Text style={styles.textRegistration}> Немає акаунту? Зареєструватися</Text>
-        </TouchableOpacity>
-
-            {/* <Button
+              {/* <Button
               title="Немає акаунту? Зареєструватися"
               onPress={() => navigation.navigate("LoginScreen")}
               color="#1B4371"
             /> */}
-            {/* <Text style={styles.textRegistration} >
+              {/* <Text style={styles.textRegistration} >
         Вже є акаунт? Увійти
         </Text> */}
-          </View>
-          {/* <Button style={styles.button} 
+            </View>
+            {/* <Button style={styles.button} 
        title="Зареєстуватися"
        color = '#FF6C00'/> */}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
-
+      </SafeAreaView>
     </ImageBackgroundScreen>
-
   );
 };
 
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 16,
     transform: [{ translateY: -4 }],
-      color: "#888d94",
+    color: "#888d94",
   },
   mainFoto: {
     // flex: 1,
@@ -236,7 +238,5 @@ const styles = StyleSheet.create({
     color: "#1B4371",
   },
 });
-
-
 
 export default LoginScreen;

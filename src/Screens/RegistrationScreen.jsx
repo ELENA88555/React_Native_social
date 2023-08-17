@@ -14,6 +14,7 @@ import {
   Keyboard,
   Pressable,
   Button,
+  Image
 } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
@@ -30,14 +31,15 @@ const initiatState = {
   login: "",
   email: "",
   password: "",
+ 
 };
 
 // const LoadApplication = async () => {
 //   await Font.loadAsync({ Roboto: require("./src/fonts/Roboto-Italic.ttf") });
 // };
 
-const Registration = ({ navigation }) => {
-  const [image, setImage] = useState(null);
+const Registration = ({ navigation,  }) => {
+  const [userPhoto, setUserPhoto] = useState(null);  
 
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -86,6 +88,13 @@ const Registration = ({ navigation }) => {
   };
 
   const takePhoto = async () => {
+
+    // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    // if (status !== "granted") {
+    //   console.log("Insufficient permissions!");
+    //   return;
+    // }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -93,11 +102,12 @@ const Registration = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result);
+    // console.log(result);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setUserPhoto(result.assets[0].uri);
     }
+    // await  navigation.navigate("Home", { image })
   };
 
   return (
@@ -105,10 +115,10 @@ const Registration = ({ navigation }) => {
       <SafeAreaView>
         <View style={styles.mainFoto}>
           <View style={styles.addFoto}>
-            {image && <Image source={{ uri: image }} style={styles.image} />}
+            {userPhoto && <Image source={{ uri: userPhoto }} style={styles.image} />}
             <TouchableOpacity onPress={takePhoto}>
               <Ionicons
-                name={image ? "close-circle-outline" : "add-circle-outline"}
+                name={userPhoto ? "close-circle-outline" : "add-circle-outline"}
                 size={32}
                 color="#FF6C00"
                 style={styles.addImage}

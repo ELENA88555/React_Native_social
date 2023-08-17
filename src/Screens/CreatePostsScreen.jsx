@@ -197,14 +197,14 @@ const CreatePostsScreen = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity
             onPress={clearPosts}
-            style={styles.clearButton}
+            // style={styles.clearButton}
           >
-            <Ionicons
+            {/* <Ionicons
               name="trash-outline"
               size={24}
               color="#DADADA"
               style={styles.icon}
-            />
+            /> */}
           </TouchableOpacity>
     </View>
   );
