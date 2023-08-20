@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileList;
+export default ProfileComponent;

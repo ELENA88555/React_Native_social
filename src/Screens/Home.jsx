@@ -12,14 +12,22 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { authSingOutUser } from "../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
+// import { selectEmail } from "../redux/auth/authSelector";
 
-const Home = ({ route, navigation, }) => {
+
+
+
+
+const Home = ({ route,  userPhoto}) => {
+
+// const email = useSelector(selectEmail)
+
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (route.params) {
@@ -29,6 +37,7 @@ const Home = ({ route, navigation, }) => {
 
   const signOut = () => {
     dispatch(authSingOutUser());
+    // navigation.navigate("Login")
   };
 
   return (
@@ -42,6 +51,10 @@ const Home = ({ route, navigation, }) => {
         </View>
         <View style={styles.addFoto}>
               <Image style={styles.image} source={{ uri: userPhoto }} />
+              
+         </View>
+         <View>
+         <Text style={styles.email}></Text>
          </View>
         <FlatList
           data={posts}
@@ -103,29 +116,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   addPhoto:{
-    // flex: 1,
+    flex: 1,
     alignItems: "center",
     textAlign: "center",
     justifyContent: "center",
     width: 60,
     height: 60,
-    // backgroundColor: "#763a3a",
+    backgroundColor: "#763a3a",
     borderRadius: 16,
     borderWidth: 1,
     borderColor:"#763a3a",
-    enum: "absolute",
-    // position: "absolute",
-    // enum: 'relative',
-    top: 60,
-    left: 128,
-    zIndex: 1,
-    overflow: "hidden",
+    // enum: "absolute",
+    // // position: "absolute",
+    // // enum: 'relative',
+    // top: 60,
+    // left: 128,
+    // zIndex: 1,
+    // overflow: "hidden",
 },
   image: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
+    // position: "absolute",
+    // width: "100%",
+    // height: "100%",
+    // borderRadius: 16,
+    width: 60,
+    height: 60,
     borderRadius: 16,
+    resizeMode: 'cover',
   },
 
   signOut: {

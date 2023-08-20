@@ -33,6 +33,7 @@ const initiatState = {
 // };
 
 const LoginScreen = ({ navigation }) => {
+
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
   const [password, setPassword] = useState("");
@@ -96,8 +97,9 @@ const LoginScreen = ({ navigation }) => {
                 }
                 value={state.password}
                 placeholder="Пароль"
+                textContentType="newPassword"
                 keyboardType="numeric"
-                secureTextEntry={true}
+                secureTextEntry={passwordVisibility}
                 onFocus={() => {
                   setIsShowKeyBoard(true);
                 }}

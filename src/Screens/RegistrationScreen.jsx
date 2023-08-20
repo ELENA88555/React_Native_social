@@ -1,7 +1,7 @@
 import { useState } from "react";
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 import {
   SafeAreaView,
   StyleSheet,
@@ -31,6 +31,7 @@ const initiatState = {
   login: "",
   email: "",
   password: "",
+  userPhoto: null,
  
 };
 
@@ -81,10 +82,15 @@ const Registration = ({ navigation,  }) => {
   const [isShowKeyBoard, setIsShowKeyBoard] = useState(false);
 
   const handleSubmit = () => {
+    // const newUser = {
+
+    // }
     setIsShowKeyBoard(false);
     Keyboard.dismiss();
     dispatch(authSignUpUser(state));
     setState(initiatState);
+
+    navigation.navigate("Home", );  
   };
 
   const takePhoto = async () => {

@@ -11,7 +11,7 @@ import { authStateChanged } from "../redux/auth/authOperations";
 export const Main = ()=> {
   // const [user, setUser] = useState(null)
 
-  const {stateChange} = useSelector((state) => state.auth)
+  const stateChange = useSelector((state) => state.auth)
 const dispatch = useDispatch()
 useEffect(()=>{
   dispatch(authStateChanged())

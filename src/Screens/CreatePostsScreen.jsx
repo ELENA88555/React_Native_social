@@ -10,26 +10,23 @@ import { View, Text } from "react-native";
 import { app, db } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
 
-
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-
-
-
+  const [posts, setPosts] = useState([]);
+  const [commentNumber, setCommentNumber] = useState(0);
 
   const takePhoto = async () => {
-    const {uri} = await camera.takePictureAsync();
+    const { uri } = await camera.takePictureAsync();
     const location = await Location.getCurrentPositionAsync();
-    console.log(location)
-    console.log(location.coords.latitude)
-    console.log(location.coords.longitude)
+    console.log(location);
+    console.log(location.coords.latitude);
+    console.log(location.coords.longitude);
     setPhoto(uri);
   };
-
 
   const choosePhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -46,13 +43,11 @@ const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-
   useEffect(() => {
     (async () => {
-      
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
         return;
       }
 
@@ -61,59 +56,66 @@ const CreatePostsScreen = ({ navigation }) => {
     })();
   }, []);
 
-
-  const uploadPhotoToServer = async () => {
-    const response = await fetch(photo)
-    const file = await response.blob()
-    
-    const uniqePostId = Date.now().toString()
-    
-    // const data = await app.storage().ref(`postImage/${uniqePostId}`).put(file)
-    const data =  await db.storage().ref(`postImage/${uniqePostId}`).put(file)
-    console.log(data)
-    const processedPhoto = await db.storage().ref("postImage").child(uniqePostId).getDownloadURL()
-
-
-    }
-
-
-
-//   const writeDataToFirestore = async () => {
-//     try {
-//       const docRef = await addDoc(collection(db, 'postImage'), {
-//         camera, location, comments: []
-
-
-//       });
-//       console.log('Document written with ID: ', docRef.id);
-//     } catch (e) {
-//       console.error('Error adding document: ', e);
-//         throw e;
-//     }
-// };
-
-
-
-// const getDataFromFirestore = async () => {
-//   try {
-//     const snapshot = await getDocs(collection(db, 'users'));
-//         
-//     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-//       
-//           return snapshot.map((doc) => ({ id: doc.id, data: doc.data() });
-//   } catch (error) {
-//     console.log(error);
-//           throw error;
-//   }
-// };
-
-
-  const sendPhoto = () => {
-    uploadPhotoToServer()
-    navigation.navigate("Home", { photo });
+  const handleChangeName = (value) => {
+    setName(value);
   };
 
-  const disabledButton =name === "" || photo === null 
+  const handleChangeMap = (value) => {
+    setLocation(value);
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+
+    const uniqePostId = Date.now().toString();
+
+    // const data = await app.storage().ref(`postImage/${uniqePostId}`).put(file)
+    const data = await db.storage().ref(`postImage/${uniqePostId}`).put(file);
+    console.log(data);
+    const processedPhoto = await db
+      .storage()
+      .ref("postImage")
+      .child(uniqePostId)
+      .getDownloadURL();
+  };
+
+  //   const writeDataToFirestore = async () => {
+  //     try {
+  //       const docRef = await addDoc(collection(db, 'postImage'), {
+  //         camera, location, comments: []
+
+  //       });
+  //       console.log('Document written with ID: ', docRef.id);
+  //     } catch (e) {
+  //       console.error('Error adding document: ', e);
+  //         throw e;
+  //     }
+  // };
+
+  // const getDataFromFirestore = async () => {
+  //   try {
+  //     const snapshot = await getDocs(collection(db, 'users'));
+  //
+  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+  //
+  //           return snapshot.map((doc) => ({ id: doc.id, data: doc.data() });
+  //   } catch (error) {
+  //     console.log(error);
+  //           throw error;
+  //   }
+  // };
+
+  const sendPhoto = () => {
+    uploadPhotoToServer();
+    navigation.navigate("Home", { photo, name, location });
+
+    setName("")
+    setPhoto(null)
+    setLocation("")
+  };
+
+  const disabledButton = name === "" || photo === null;
 
   const clearPosts = () => {
     setPhoto(null);
@@ -121,18 +123,18 @@ const CreatePostsScreen = ({ navigation }) => {
     setName("");
   };
 
-
+  const clearPostsButton = name === "" && location === "" && photo === null;
   return (
     <View style={styles.container}>
-        <View style={styles.headerContainer}>
-       <Text style={styles.header}>Create new post</Text>
-                <TouchableOpacity
-            style={styles.goBack}
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back" size={24} />
-          </TouchableOpacity>
-          </View>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Create new post</Text>
+        <TouchableOpacity
+          style={styles.goBack}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} />
+        </TouchableOpacity>
+      </View>
       <Camera ref={setCamera} style={styles.camera}>
         {photo && (
           <View style={styles.containerPhoto}>
@@ -147,22 +149,22 @@ const CreatePostsScreen = ({ navigation }) => {
           <Ionicons name="ios-camera-outline" size={24} color="gray" />
         </TouchableOpacity>
       </Camera>
-      <TouchableOpacity 
-      onPress={choosePhoto}
-      >
-      <Text style={styles.text}>Upload a photo</Text>
+      <TouchableOpacity onPress={choosePhoto}>
+        <Text style={styles.text}>Upload a photo</Text>
       </TouchableOpacity>
       <View style={styles.containerInput}>
         <TextInput
-        //  value={name}
+          value={name}
           style={styles.input}
+          placeholderTextColor="#BDBDBD"
           placeholder="Name..."
           keyboardType="default"
+          onChangeText={handleChangeName}
         />
 
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={()=> navigation.navigate("Map")}
+          onPress={() => navigation.navigate("Map")}
           style={styles.location}
         >
           <SimpleLineIcons name="location-pin" size={24} color="gray" />
@@ -172,40 +174,39 @@ const CreatePostsScreen = ({ navigation }) => {
           dataDetectorTypes={"address"}
           style={styles.input}
           placeholder="Locality..."
+          placeholderTextColor="#BDBDBD"
           keyboardType="default"
+          onChangeText={handleChangeMap}
         />
-       </View>
+      </View>
 
       <TouchableOpacity
         activeOpacity={0.8}
-        // disabled={disabledButton}
-        style={
-          !disabledButton ? styles.button : styles.disabledButton
-        }
-        
+        disabled={disabledButton}
+        style={!disabledButton ? styles.button : styles.disabledButton}
         onPress={sendPhoto}
       >
-                     <Text
-                style={
-                  !disabledButton
-                    ? styles.buttonText
-                    : styles.disabledButtonText
-                }
-              >
-                Publish
-              </Text>
+        <Text
+          style={
+            !disabledButton ? styles.buttonText : styles.disabledButtonText
+          }
+        >
+          Publish
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
-            onPress={clearPosts}
-            // style={styles.clearButton}
-          >
-            {/* <Ionicons
-              name="trash-outline"
-              size={24}
-              color="#DADADA"
-              style={styles.icon}
-            /> */}
-          </TouchableOpacity>
+        onPress={clearPosts}
+        style={
+          !clearPostsButton ? styles.trashButton : styles.trashButtonDisabled
+        }
+      >
+        <Ionicons
+          name="trash-outline"
+          size={24}
+          color="#DADADA"
+          style={styles.trashIcon}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -306,14 +307,19 @@ const styles = StyleSheet.create({
     height: 41,
     borderRadius: 100,
     backgroundColor: "#F6F6F6",
-    marginTop: 23,
     borderWidth: 1,
     borderColor: "transparent",
   },
 
   button: {
-    marginTop: 32,
-    paddingVertical: 16,
+    justifyContent: "center",
+    marginTop: 22,
+    alignItems: "center",
+    height: 41,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: "transparent",
+    // paddingVertical: 16,
     backgroundColor: "#FF6C00",
   },
   location: {
@@ -323,14 +329,12 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     borderRadius: 100,
 
-// position: "absolute",
-
+    // position: "absolute",
   },
   buttonText: {
     color: "#FFFFFF",
     textAlign: "center",
     fontSize: 14,
-
   },
 
   disabledButtonText: {
@@ -350,13 +354,36 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "#F6F6F6",
   },
-  icon: {
+
+  trashButton: {
+    flex: 1,
+    position: "absolute",
+    width: 70,
+    height: 40,
+    bottom: 14,
+    left: "50%",
+    transform: [{ translateX: -0.3 * 70 }],
+    borderRadius: 100,
+    backgroundColor: "#FF6C00",
+  },
+  trashButtonDisabled: {
+    flex: 1,
+    position: "absolute",
+    width: 70,
+    height: 40,
+    bottom: 14,
+    left: "50%",
+    transform: [{ translateX: -0.3 * 70 }],
+
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+  },
+  trashIcon: {
     position: "absolute",
     bottom: "50%",
     left: "50%",
     transform: [{ translateY: 0.5 * 25 }, { translateX: -0.5 * 25 }],
   },
-
 });
 
 export default CreatePostsScreen;

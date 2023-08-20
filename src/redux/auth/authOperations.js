@@ -7,10 +7,12 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
+  signOut,
 } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
 
 const {  authSignOut } = authSlice.actions
-
+ 
 
 // export const updateUserProfile = async (update) => {
 //   const user = auth.currentUser;
@@ -48,7 +50,7 @@ const {  authSignOut } = authSlice.actions
 // };
 
 
-export const authSignUpUser = ({ email, password,nickName }) =>
+export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const { user } = userCredential;
@@ -58,6 +60,12 @@ export const authSignUpUser = ({ email, password,nickName }) =>
       authSlice.actions.updateUserProfile({
         userId: user.uid,
         nickName: displayName,
+        // photoURL: user.userPhoto
+      });
+
+      const dbBase = addDoc(collection(db, "users"), {
+        name: displayName,
+        email,
       });
     })
     .catch((error) => {
@@ -98,11 +106,12 @@ export const authSignUpUser = ({ email, password,nickName }) =>
 
 
 export const authStateChanged = () => async (dispatch, getState) => {
-  await auth.onAuthStateChanged((user) => {
+  await onAuthStateChanged(auth, (user) => {
     if (user) {
       const userUpdateProfile = {
         nickName: user.displayName,
         userId: user.uid,
+        email: user.email,
       };
       dispatch(authSlice.actions.authStateChange({stateChange: true}))
       dispatch(authSlice.actions.updateUserProfile(userUpdateProfile))
@@ -123,7 +132,9 @@ export const authSingIn = async ({ email, password }) => {
   }
 };
 
+
+
 export const authSingOutUser = () => async (dispatch, getState) => {
-  await auth.signOut()
+  await signOut(auth)
   dispatch(authSignOut())
 };
