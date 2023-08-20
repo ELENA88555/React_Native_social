@@ -14,17 +14,17 @@ import { collection, addDoc } from "firebase/firestore";
 const {  authSignOut } = authSlice.actions
  
 
-// export const updateUserProfile = async (update) => {
-//   const user = auth.currentUser;
+export const updateUserProfile = async (photoURL) => {
+  const user = auth.currentUser;
 
-//   if (user) {
-//      try {
-//       await updateProfile(user, update);
-//     } catch (error) {
-//       throw error;
-//     }
-//   }
-// };
+  if (user) {
+     try {
+      await updateProfile(user,  {photoURL: photoURL},);
+    } catch (error) {
+      throw error;
+    }
+  }
+};
 
 
 
@@ -59,11 +59,11 @@ export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
 
       authSlice.actions.updateUserProfile({
         userId: user.uid,
-        nickName: displayName,
+        nickName:  user.displayName,
         // photoURL: user.userPhoto
       });
 
-      const dbBase = addDoc(collection(db, "users"), {
+      const docRef = addDoc(collection(db, "users"), {
         name: displayName,
         email,
       });

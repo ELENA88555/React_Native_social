@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
 import { selectEmail, selectNickName} from "../redux/auth/authSelector";
-import { selectUsePhoto } from "../redux/auth/authSelector";
+import { selectUserPhoto } from "../redux/auth/authSelector";
 
 
 
@@ -25,7 +25,7 @@ import { selectUsePhoto } from "../redux/auth/authSelector";
 const Home = ({ route}) => {
 
 const email = useSelector(selectEmail)
-const userPhoto = useSelector(selectUsePhoto)
+const userPhoto = useSelector(selectUserPhoto)
 const displayName  = useSelector(selectNickName)
 
   const [posts, setPosts] = useState([]);
@@ -57,8 +57,10 @@ const displayName  = useSelector(selectNickName)
               <Image style={styles.image} source={{ uri: userPhoto }} />
               
          </View>
-         <Text style={styles.email}>{email}</Text>
-         <Text style={styles.name}>{displayName}</Text>
+         <View style= {styles.userInfo}>
+         <Text style={styles.name}>{email}</Text>
+         <Text style={styles.email}>{displayName}</Text>
+         </View>
          </View>
         <FlatList
           data={posts}
@@ -130,13 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor:"#763a3a",
-    // enum: "absolute",
-    //  position: "absolute",
-    // // enum: 'relative',
-    // top: 60,
-    // left: 128,
-    // zIndex: 1,
-    overflow: "hidden",
+    // overflow: "hidden",
 },
   image: {
     // position: "absolute",
@@ -147,6 +143,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 16,
     resizeMode: 'cover',
+    marginBottom: 10,
   },
 
   signOut: {
@@ -160,6 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   header: {
+ 
     textAlign: "center",
     fontSize: 17,
     lineHeight: 22,
@@ -171,6 +169,7 @@ const styles = StyleSheet.create({
     height: 240,
     borderRadius: 8,
     borderWidth: 1,
+    marginTop: 5,
   },
   post: {
     display: "flex",
@@ -200,11 +199,12 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 13,
   },
-  name: {
-  
-    fontSize: 13,
-    lineHeight: 15,
-  },
+
+  userInfo: {
+    display: "flex",
+    flexDirection: "column",
+    paddingVertical: 12,
+  }
 });
 
 export default Home;

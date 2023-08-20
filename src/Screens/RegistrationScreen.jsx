@@ -40,7 +40,8 @@ const initiatState = {
 // };
 
 const Registration = ({ navigation,  }) => {
-  const [userPhoto, setUserPhoto] = useState(null);  
+  const [userPhoto, setUserPhoto] = useState(null); 
+  const [image, setImage] = useState(null);  
 
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -108,12 +109,10 @@ const Registration = ({ navigation,  }) => {
       quality: 1,
     });
 
-    // console.log(result);
-
     if (!result.canceled) {
       setUserPhoto(result.assets[0].uri);
     }
-    // await  navigation.navigate("Home", { image })
+  
   };
 
   return (
@@ -125,6 +124,7 @@ const Registration = ({ navigation,  }) => {
              (<Image source={{ uri: userPhoto }} style={styles.image} /> )
              : (<Image source={ {uri: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1"} } style={styles.image} /> )
              }
+           </View>
             <TouchableOpacity onPress={takePhoto}>
               <Ionicons
                 name={userPhoto ? "close-circle-outline" : "add-circle-outline"}
@@ -133,7 +133,7 @@ const Registration = ({ navigation,  }) => {
                 style={styles.addImage}
               />
             </TouchableOpacity>
-          </View>
+         
         </View>
         <View style={styles.containerForm}>
           <Text style={styles.text}>Реєстрація</Text>
@@ -281,8 +281,26 @@ const styles = StyleSheet.create({
     textAlign: "right",
     color: "#b7bfc7",
   },
+
+
   mainFoto: {
-    // flex: 1,
+    alignItems: "center",
+    textAlign: "center",
+    justifyContent: "center",
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    enum: "absolute",
+    position: "relative",
+    // top: 10,
+    // left: 128,
+    zIndex: 999,
+    // overflow: "hidden",
+  //   borderColor: "#F6F6F6",
+  //  borderWidth: 1,
+   transform: [{ translateY: -0.4 * -30 }],
+  },
+  addFoto: {
     alignItems: "center",
     textAlign: "center",
     justifyContent: "center",
@@ -290,28 +308,94 @@ const styles = StyleSheet.create({
     height: 120,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
-    enum: "absolute",
-    // position: "absolute",
-    // enum: 'relative',
-    top: 60,
-    left: 128,
-    zIndex: 1,
-    overflow: "hidden",
+    // enum: "absolute",
+    position: "relative",
+    top: 10,
+    left: "120%",
+    zIndex: 999,
+    // overflow: "hidden",
+    borderColor: "#F6F6F6",
+   borderWidth: 1,
+   transform: [{ translateY: -0.4 * -20 }]
   },
-  addFoto: {
+  
+  image: {
     // position: "absolute",
-    // backgroundColor: "#F6F6F6",
-    // top: -10,
-    // left: "30%",
-    // width: 120,
-    // height: 120,
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
+    zIndex: 999,
+ 
   },
   addImage: {
-    zIndex: 999,
     position: "absolute",
-    bottom: -45,
-    right: -64,
+    zIndex: 999,
+    left: "160%",
+    top: "15%",
   },
+  
+  
+
+  // mainFoto: {
+  //   // flex: 1,
+  //   // position: "absolute",
+  //   // alignItems: "center",
+  //   // textAlign: "center",
+  //   // top: 60,
+  //   // left: 128,
+  //   // position: "absolute",
+  //   // top: -60,
+  //   // left: "50%",
+  //   // transform: [{ translateX: -0.4 * 120 }],
+  //   // width: 120,
+  //   // height: 120,
+  //   // borderRadius: 16,
+  //   // backgroundColor: "#F6F6F6",
+  //   // overflow: "hidden",
+    
+  // },
+
+  // addImage: {
+  //   // position: "absolute",
+  //   // bottom: 16,
+  //   // right: 118,
+ 
+  //   zIndex: 999,
+  //   position: "absolute",
+  //   bottom: 30,
+  //   right: -64,
+  // },
+  // addFoto:{
+
+  //   position: "absolute",
+  //   top: -80,
+  //   left: "50%",
+  //   transform: [{ translateX: -0.4 * 120 }],
+  //   width: 120,
+  //   height: 120,
+  //   borderRadius: 16,
+  //   backgroundColor: "#F6F6F6",
+   
+  //   // width: 120,
+  //   // height: 120,
+  //   // // backgroundColor: "#cc9090",
+  //   // borderRadius: 16,
+  //   // // enum: "absolute",
+  //   // borderColor: "#F6F6F6",
+  //   // borderWidth: 1,
+  //   // top: 120,
+  //   // left: 128,
+  //   zIndex: 999,
+  //   overflow: "hidden",
+  // },
+  // image: {
+  //   alignItems: "center",
+  //   alignItems: "center",
+  //   position: "absolute",
+  //   width: "100%",
+  //   height: "100%",
+  //   borderRadius: 16,
+  // },
 
   textRegistration: {
     marginTop: 16,
@@ -327,12 +411,6 @@ const styles = StyleSheet.create({
     right: 16,
     transform: [{ translateY: -4 }],
     color: "#888d94",
-  },
-  image: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    borderRadius: 16,
   },
 });
 

@@ -22,7 +22,7 @@ const CreatePostsScreen = ({ navigation }) => {
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
     const location = await Location.getCurrentPositionAsync();
-    console.log(location);
+ 
     console.log(location.coords.latitude);
     console.log(location.coords.longitude);
     setPhoto(uri);
@@ -35,11 +35,10 @@ const CreatePostsScreen = ({ navigation }) => {
       aspect: [4, 3],
       quality: 1,
     });
-
     console.log(result);
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setPhoto(result.assets[0].uri);
     }
   };
 
