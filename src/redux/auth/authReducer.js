@@ -26,6 +26,10 @@ export const authSlice = createSlice({
     }),
     authSignOut: () => state,
   },
+changePhoto: (state, {payload}) =>({
+  userPhoto: payload.userPhoto,
+}),
+
   addComent: (state, { payload }) => ({
     comment: payload,
   }),

@@ -1,4 +1,3 @@
-
 import { SimpleLineIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,18 +14,13 @@ import { authSingOutUser } from "../redux/auth/authOperations";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
-import { selectEmail, selectNickName} from "../redux/auth/authSelector";
+import { selectEmail, selectNickName } from "../redux/auth/authSelector";
 import { selectUserPhoto } from "../redux/auth/authSelector";
 
-
-
-
-
-const Home = ({ route}) => {
-
-const email = useSelector(selectEmail)
-const userPhoto = useSelector(selectUserPhoto)
-const displayName  = useSelector(selectNickName)
+const Home = ({ route }) => {
+  const email = useSelector(selectEmail);
+  const userPhoto = useSelector(selectUserPhoto);
+  const displayName = useSelector(selectNickName);
 
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
@@ -52,16 +46,15 @@ const displayName  = useSelector(selectNickName)
             <Ionicons name="log-out-outline" size={24} color="gray" />
           </TouchableOpacity>
         </View>
-         <View style= {styles.user}>
-        <View style={styles.addPhoto}>
-              <Image style={styles.image} source={{ uri: userPhoto }} />
-              
-         </View>
-         <View style= {styles.userInfo}>
-         <Text style={styles.name}>{email}</Text>
-         <Text style={styles.email}>{displayName}</Text>
-         </View>
-         </View>
+        <View style={styles.user}>
+          <View style={styles.addPhoto}>
+            <Image style={styles.image} source={{ uri: userPhoto }} />
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.email}>{email}</Text>
+            <Text style={styles.name}>{displayName}</Text>
+          </View>
+        </View>
         <FlatList
           data={posts}
           keyExtractor={(item, indx) => item + indx.toString()}
@@ -121,7 +114,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: "#FFFFFF",
   },
-  addPhoto:{
+  addPhoto: {
     // flex: 1,
     alignItems: "center",
     textAlign: "center",
@@ -131,9 +124,9 @@ const styles = StyleSheet.create({
     // backgroundColor: "#763a3a",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor:"#763a3a",
+    borderColor: "#763a3a",
     // overflow: "hidden",
-},
+  },
   image: {
     // position: "absolute",
     // width: "100%",
@@ -142,7 +135,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 16,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     marginBottom: 10,
   },
 
@@ -157,7 +150,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   header: {
- 
     textAlign: "center",
     fontSize: 17,
     lineHeight: 22,
@@ -204,7 +196,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     paddingVertical: 12,
-  }
+  },
 });
 
 export default Home;

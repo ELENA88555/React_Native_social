@@ -14,7 +14,7 @@ import {
   Keyboard,
   Pressable,
   Button,
-  Image
+  Image,
 } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
@@ -32,16 +32,15 @@ const initiatState = {
   email: "",
   password: "",
   userPhoto: null,
- 
 };
 
 // const LoadApplication = async () => {
 //   await Font.loadAsync({ Roboto: require("./src/fonts/Roboto-Italic.ttf") });
 // };
 
-const Registration = ({ navigation,  }) => {
-  const [userPhoto, setUserPhoto] = useState(null); 
-  const [image, setImage] = useState(null);  
+const Registration = ({ navigation }) => {
+  const [userPhoto, setUserPhoto] = useState(null);
+  const [image, setImage] = useState(null);
 
   const { passwordVisibility, rightIcon, handlePasswordVisibility } =
     useTogglePasswordVisibility();
@@ -91,11 +90,10 @@ const Registration = ({ navigation,  }) => {
     dispatch(authSignUpUser(state));
     setState(initiatState);
 
-    navigation.navigate("Home", {nickName, userPhoto, email});  
+    navigation.navigate("Home", { nickName, userPhoto, email });
   };
 
   const takePhoto = async () => {
-
     // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     // if (status !== "granted") {
     //   console.log("Insufficient permissions!");
@@ -112,7 +110,10 @@ const Registration = ({ navigation,  }) => {
     if (!result.canceled) {
       setUserPhoto(result.assets[0].uri);
     }
-  
+  };
+
+  const deletePhoto = () => {
+    setUserPhoto(null);
   };
 
   return (
@@ -120,20 +121,25 @@ const Registration = ({ navigation,  }) => {
       <SafeAreaView>
         <View style={styles.mainFoto}>
           <View style={styles.addFoto}>
-            {userPhoto ?
-             (<Image source={{ uri: userPhoto }} style={styles.image} /> )
-             : (<Image source={ {uri: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1"} } style={styles.image} /> )
-             }
-           </View>
-            <TouchableOpacity onPress={takePhoto}>
-              <Ionicons
-                name={userPhoto ? "close-circle-outline" : "add-circle-outline"}
-                size={32}
-                color="#FF6C00"
-                style={styles.addImage}
+            {userPhoto ? (
+              <Image source={{ uri: userPhoto }} style={styles.image} />
+            ) : (
+              <Image
+                source={{
+                  uri: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
+                }}
+                style={styles.image}
               />
-            </TouchableOpacity>
-         
+            )}
+          </View>
+          <TouchableOpacity onPress={!userPhoto ? takePhoto : deletePhoto}>
+            <Ionicons
+              name={userPhoto ? "close-circle-outline" : "add-circle-outline"}
+              size={32}
+              color={userPhoto ? "#c0bebd" : "#FF6C00"}
+              style={styles.addImage}
+            />
+          </TouchableOpacity>
         </View>
         <View style={styles.containerForm}>
           <Text style={styles.text}>Реєстрація</Text>
@@ -215,9 +221,7 @@ const Registration = ({ navigation,  }) => {
                   Вже є акаунт? Увійти
                 </Text>
               </TouchableOpacity>
-
             </View>
-
           </View>
         </View>
       </SafeAreaView>
@@ -282,7 +286,6 @@ const styles = StyleSheet.create({
     color: "#b7bfc7",
   },
 
-
   mainFoto: {
     alignItems: "center",
     textAlign: "center",
@@ -296,9 +299,9 @@ const styles = StyleSheet.create({
     // left: 128,
     zIndex: 999,
     // overflow: "hidden",
-  //   borderColor: "#F6F6F6",
-  //  borderWidth: 1,
-   transform: [{ translateY: -0.4 * -30 }],
+    //   borderColor: "#F6F6F6",
+    //  borderWidth: 1,
+    transform: [{ translateY: -0.4 * -30 }],
   },
   addFoto: {
     alignItems: "center",
@@ -314,18 +317,17 @@ const styles = StyleSheet.create({
     left: "120%",
     zIndex: 999,
     // overflow: "hidden",
-    borderColor: "#F6F6F6",
-   borderWidth: 1,
-   transform: [{ translateY: -0.4 * -20 }]
+    //   borderColor: "#F6F6F6",
+    //  borderWidth: 1,
+    transform: [{ translateY: -0.4 * -20 }],
   },
-  
+
   image: {
     // position: "absolute",
     width: "100%",
     height: "100%",
     borderRadius: 16,
     zIndex: 999,
- 
   },
   addImage: {
     position: "absolute",
@@ -333,8 +335,6 @@ const styles = StyleSheet.create({
     left: "160%",
     top: "15%",
   },
-  
-  
 
   // mainFoto: {
   //   // flex: 1,
@@ -352,14 +352,14 @@ const styles = StyleSheet.create({
   //   // borderRadius: 16,
   //   // backgroundColor: "#F6F6F6",
   //   // overflow: "hidden",
-    
+
   // },
 
   // addImage: {
   //   // position: "absolute",
   //   // bottom: 16,
   //   // right: 118,
- 
+
   //   zIndex: 999,
   //   position: "absolute",
   //   bottom: 30,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   //   height: 120,
   //   borderRadius: 16,
   //   backgroundColor: "#F6F6F6",
-   
+
   //   // width: 120,
   //   // height: 120,
   //   // // backgroundColor: "#cc9090",

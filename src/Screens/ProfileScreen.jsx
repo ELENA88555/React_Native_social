@@ -1,101 +1,92 @@
 import React, { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 // import { TouchableOpacity } from "react-native-gesture-handler";
-import { Ionicons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { Button } from "react-native";
-import { StyleSheet,  ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { auth } from "../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
-import { authSingOutUser } from "../redux/auth/authOperations";
+import { authSingOutUser, updateUserProfile } from "../redux/auth/authOperations";
 import ImageBackgroundScreen from "../components/ImageBackground";
 import { selectUserPhoto } from "../redux/auth/authSelector";
 import { updateProfile } from "firebase/auth";
-
-
+import { authSlice } from "../redux/auth/authReducer";
 
 const ProfileScreen = () => {
-  const dispatch = useDispatch()
-  const userPhoto = useSelector(selectUserPhoto)
+  const dispatch = useDispatch();
+  const userPhoto = useSelector(selectUserPhoto);
   const [photoUri, setPhotoUri] = useState(userPhoto ?? null);
 
-  const signOut = ()=> {
-    dispatch(authSingOutUser())
-  }
+  const signOut = () => {
+    dispatch(authSingOutUser());
+  };
 
   const choosePhoto = async () => {
-if (photoUri){
-  dispatch(updateProfile)
-}
-
+    if (photoUri) {
+      dispatch(updateUserProfile({ photoURL: "" }));
+      dispatch(authSlice.changePhoto(""));
+      setPhotoUri(null);
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
 
     if (!result.canceled) {
-      setPhoto(result.assets[0].uri);
+      setPhotoUri(result.assets[0].uri);
+      dispatch(updateUserProfile({ photoURL: result.assets[0].uri }));
+      dispatch(authSlice.changePhoto(result.assets[0].uri));
     }
   };
 
 
+  const deletePhoto = () => {
+    setPhotoUri(null)
+  }
+
 
   return (
-    <View  style={styles.container}>
-   <ImageBackgroundScreen style={styles.backgroundImage} >
-   {/* <ScrollView> */}
-    <View  style={styles.mainContainer}>
-      {/* <Text style={styles.text}>ProfileScreen</Text> */}
-      <TouchableOpacity
-          onPress={signOut}
-          style={styles.logOutBtn}
-        >
-      {/* <Button title = "out" onPress={signOut} /> */}
-      {/* <Feather name="log-out" size={24} color="black" /> */}
-       <Ionicons name="log-out-outline" size={24} color="gray" />
-      </TouchableOpacity>
-     
-    </View>
-    <View style={styles.mainFoto}>
+    <View style={styles.container}>
+      <ImageBackgroundScreen style={styles.backgroundImage}>
+            <View style={styles.mainContainer}>
+            <TouchableOpacity onPress={signOut} style={styles.logOutBtn}>
+            <Ionicons name="log-out-outline" size={24} color="gray" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.mainFoto}>
           <View style={styles.addFoto}>
-          <Image source={{ uri: userPhoto }} style={styles.image} />
-            <TouchableOpacity onPress={choosePhoto} >
+            <Image source={{ uri: photoUri }} style={styles.image} />
+            <TouchableOpacity   onPress={ !photoUri ? choosePhoto : deletePhoto }>
               <Ionicons
-                name={ photoUri ? "close-circle-outline" : "add-circle-outline"}
+                name={photoUri ? "close-circle-outline" : "add-circle-outline"}
                 size={32}
-                color="#b7bfc7"
+                color={userPhoto ? "#c0bebd" : "#FF6C00"}
                 style={styles.addImage}
               />
             </TouchableOpacity>
           </View>
         </View>
-    </ImageBackgroundScreen>
+      </ImageBackgroundScreen>
     </View>
-
   );
 };
 
 const styles = StyleSheet.create({
-
   container: {
-    
     flex: 1,
     backgroundColor: "black",
-
   },
 
   backgroundImage: {
-  
     flex: 1,
     width: "100%",
     position: "absolute",
-   
   },
-
-
 
   mainContainer: {
     marginTop: "auto",
@@ -107,7 +98,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     backgroundColor: "#ffffff",
   },
-
 
   logOutBtn: {
     position: "absolute",
@@ -124,22 +114,22 @@ const styles = StyleSheet.create({
     // height: 120,
     // borderRadius: 16,
     // backgroundColor: "#F6F6F6",
-  //   alignItems: "center",
-  //   textAlign: "center",
-  //   justifyContent: "center",
-  //   width: 120,
-  //   height: 120,
-  //   // backgroundColor: "#F6F6F6",
-  //   borderRadius: 16,
-  //   enum: "absolute",
-  //   position: "relative",
-  //   // top: 10,
-  //   // left: 128,
-  //   zIndex: 999,
-  //   // overflow: "hidden",
-  // //   borderColor: "#F6F6F6",
-  // //  borderWidth: 1,
-  //  transform: [{ translateY: -0.4 * -30 }],
+    //   alignItems: "center",
+    //   textAlign: "center",
+    //   justifyContent: "center",
+    //   width: 120,
+    //   height: 120,
+    //   // backgroundColor: "#F6F6F6",
+    //   borderRadius: 16,
+    //   enum: "absolute",
+    //   position: "relative",
+    //   // top: 10,
+    //   // left: 128,
+    //   zIndex: 999,
+    //   // overflow: "hidden",
+    // //   borderColor: "#F6F6F6",
+    // //  borderWidth: 1,
+    //  transform: [{ translateY: -0.4 * -30 }],
   },
   addFoto: {
     position: "absolute",
@@ -150,24 +140,24 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 16,
     backgroundColor: "#F6F6F6",
-  //   alignItems: "center",
-  //   textAlign: "center",
-  //   justifyContent: "center",
-  //   width: 120,
-  //   height: 120,
-  //   backgroundColor: "#F6F6F6",
-  //   borderRadius: 16,
-  //   // enum: "absolute",
-  //   // position: "relative",
-  //   top: 10,
-  //   left: "120%",
-  //   zIndex: 999,
-  //   // overflow: "hidden",
-  //   borderColor: "#F6F6F6",
-  //  borderWidth: 1,
-  //  transform: [{ translateY: -0.4 * -20 }]
+    //   alignItems: "center",
+    //   textAlign: "center",
+    //   justifyContent: "center",
+    //   width: 120,
+    //   height: 120,
+    //   backgroundColor: "#F6F6F6",
+    //   borderRadius: 16,
+    //   // enum: "absolute",
+    //   // position: "relative",
+    //   top: 10,
+    //   left: "120%",
+    //   zIndex: 999,
+    //   // overflow: "hidden",
+    //   borderColor: "#F6F6F6",
+    //  borderWidth: 1,
+    //  transform: [{ translateY: -0.4 * -20 }]
   },
-  
+
   image: {
     width: "100%",
     height: "100%",
@@ -177,7 +167,6 @@ const styles = StyleSheet.create({
     // height: "100%",
     // borderRadius: 16,
     // zIndex: 999,
- 
   },
   addImage: {
     position: "absolute",
@@ -188,7 +177,6 @@ const styles = StyleSheet.create({
     // left: "160%",
     // top: "15%",
   },
-
 });
 
 export default ProfileScreen;
