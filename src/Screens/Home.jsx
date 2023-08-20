@@ -15,15 +15,18 @@ import { authSingOutUser } from "../redux/auth/authOperations";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
-// import { selectEmail } from "../redux/auth/authSelector";
+import { selectEmail, selectNickName} from "../redux/auth/authSelector";
+import { selectUsePhoto } from "../redux/auth/authSelector";
 
 
 
 
 
-const Home = ({ route,  userPhoto}) => {
+const Home = ({ route}) => {
 
-// const email = useSelector(selectEmail)
+const email = useSelector(selectEmail)
+const userPhoto = useSelector(selectUsePhoto)
+const displayName  = useSelector(selectNickName)
 
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
@@ -49,12 +52,13 @@ const Home = ({ route,  userPhoto}) => {
             <Ionicons name="log-out-outline" size={24} color="gray" />
           </TouchableOpacity>
         </View>
-        <View style={styles.addFoto}>
+         <View style= {styles.user}>
+        <View style={styles.addPhoto}>
               <Image style={styles.image} source={{ uri: userPhoto }} />
               
          </View>
-         <View>
-         <Text style={styles.email}></Text>
+         <Text style={styles.email}>{email}</Text>
+         <Text style={styles.name}>{displayName}</Text>
          </View>
         <FlatList
           data={posts}
@@ -116,29 +120,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   addPhoto:{
-    flex: 1,
+    // flex: 1,
     alignItems: "center",
     textAlign: "center",
     justifyContent: "center",
     width: 60,
     height: 60,
-    backgroundColor: "#763a3a",
+    // backgroundColor: "#763a3a",
     borderRadius: 16,
     borderWidth: 1,
     borderColor:"#763a3a",
     // enum: "absolute",
-    // // position: "absolute",
+    //  position: "absolute",
     // // enum: 'relative',
     // top: 60,
     // left: 128,
     // zIndex: 1,
-    // overflow: "hidden",
+    overflow: "hidden",
 },
   image: {
     // position: "absolute",
     // width: "100%",
     // height: "100%",
-    // borderRadius: 16,
+    borderRadius: 16,
     width: 60,
     height: 60,
     borderRadius: 16,
@@ -174,13 +178,32 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
     justifyContent: "space-between",
     marginTop: 5,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   infoPost: {
     display: "flex",
     flexDirection: "row",
     gap: 5,
     alignItems: "center",
+  },
+  user: {
+    display: "flex",
+    flexDirection: "row",
+    paddingVertical: 32,
+  },
+  // display: "flex",
+  // flexDirection: "column",
+  // justifyContent: "center",
+
+  email: {
+    fontWeight: 400,
+    fontSize: 11,
+    lineHeight: 13,
+  },
+  name: {
+  
+    fontSize: 13,
+    lineHeight: 15,
   },
 });
 

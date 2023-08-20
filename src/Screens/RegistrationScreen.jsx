@@ -28,7 +28,7 @@ import { Dimensions } from "react-native";
 import { useEffect } from "react";
 
 const initiatState = {
-  login: "",
+  nickName: "",
   email: "",
   password: "",
   userPhoto: null,
@@ -90,7 +90,7 @@ const Registration = ({ navigation,  }) => {
     dispatch(authSignUpUser(state));
     setState(initiatState);
 
-    navigation.navigate("Home", );  
+    navigation.navigate("Home", {nickName, userPhoto, email});  
   };
 
   const takePhoto = async () => {
@@ -121,7 +121,10 @@ const Registration = ({ navigation,  }) => {
       <SafeAreaView>
         <View style={styles.mainFoto}>
           <View style={styles.addFoto}>
-            {userPhoto && <Image source={{ uri: userPhoto }} style={styles.image} />}
+            {userPhoto ?
+             (<Image source={{ uri: userPhoto }} style={styles.image} /> )
+             : (<Image source={ {uri: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1"} } style={styles.image} /> )
+             }
             <TouchableOpacity onPress={takePhoto}>
               <Ionicons
                 name={userPhoto ? "close-circle-outline" : "add-circle-outline"}
@@ -147,9 +150,9 @@ const Registration = ({ navigation,  }) => {
               <TextInput
                 style={styles.input}
                 onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, login: value }))
+                  setState((prevState) => ({ ...prevState, nickName: value }))
                 }
-                value={state.login}
+                value={state.nickName}
                 placeholder="Логін"
                 maxLength={40}
                 onFocus={() => {
