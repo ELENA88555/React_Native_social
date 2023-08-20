@@ -196,6 +196,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     paddingVertical: 12,
+    marginLeft: 5,
+ 
   },
 });
 
