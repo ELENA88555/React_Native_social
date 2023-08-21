@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { authSingOutUser } from "../redux/auth/authOperations";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
 import { selectEmail, selectNickName } from "../redux/auth/authSelector";
 import { selectUserPhoto } from "../redux/auth/authSelector";
@@ -21,6 +21,7 @@ const Home = ({ route }) => {
   const email = useSelector(selectEmail);
   const userPhoto = useSelector(selectUserPhoto);
   const displayName = useSelector(selectNickName);
+  const { params } = useRoute();
 
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
