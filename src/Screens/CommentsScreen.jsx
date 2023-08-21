@@ -35,7 +35,7 @@ const ComentsScreen = () => {
   //     return;
   //   }
 
-  //   addNewComment({
+  //   addComment({
   //     postId: params.postId,
   //     newComment: { date: Date.now(), text: comment, avatar: avatar },
   //   });
