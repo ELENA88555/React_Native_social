@@ -60,7 +60,7 @@ export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
       authSlice.actions.updateUserProfile({
         userId: user.uid,
         nickName:  user.displayName,
-        // photoURL: user.userPhoto
+        userPhoto: user.photoURL
       });
 
       const docRef = addDoc(collection(db, "users"), {
@@ -106,7 +106,7 @@ export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
 
 
 export const authStateChanged = () => async (dispatch, getState) => {
-  await onAuthStateChanged(auth, (user) => {
+  await  onAuthStateChanged(auth, (user) => {
     if (user) {
       const userUpdateProfile = {
         nickName: user.displayName,
@@ -116,7 +116,7 @@ export const authStateChanged = () => async (dispatch, getState) => {
       dispatch(authSlice.actions.authStateChange({stateChange: true}))
       dispatch(authSlice.actions.updateUserProfile(userUpdateProfile))
     }
-  });
+  });  
 };
 
 

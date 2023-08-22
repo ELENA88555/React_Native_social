@@ -1,4 +1,4 @@
-import "react-native-gesture-handler";
+// import "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
@@ -7,8 +7,11 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { View, Text } from "react-native";
-import { app, db } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { app, db, storage } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
+import { selectNickName, selectUserId } from "../redux/auth/authSelector";
+import { useSelector } from "react-redux";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -18,6 +21,31 @@ const CreatePostsScreen = ({ navigation }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [posts, setPosts] = useState([]);
   const [commentNumber, setCommentNumber] = useState(0);
+  const [mapLocation, setMapLocation] = useState("");
+
+  const userId = useSelector(selectUserId);
+  const user = useSelector(selectNickName)
+
+  useEffect(() => {
+
+
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      setLocation(coords);
+    })();
+  }, []);
+
+
 
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
@@ -47,25 +75,14 @@ const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
 
   const handleChangeName = (value) => {
     setName(value);
   };
 
   const handleChangeMap = (value) => {
-    setLocation(value);
+    setMapLocation(value);
   };
 
   const uploadPhotoToServer = async () => {
@@ -75,27 +92,38 @@ const CreatePostsScreen = ({ navigation }) => {
     const uniqePostId = Date.now().toString();
 
     // const data = await app.storage().ref(`postImage/${uniqePostId}`).put(file)
-    const data = await db.storage().ref(`postImage/${uniqePostId}`).put(file);
+    const data = ref(storage, `postImage/${uniqePostId}/${file}`);
     console.log(data);
-    const processedPhoto = await db
-      .storage()
-      .ref("postImage")
-      .child(uniqePostId)
-      .getDownloadURL();
+    await uploadBytes(data, file)
+    const processedPhoto = await getDownloadURL(data)
+    return processedPhoto;
+
+
+    // const processedPhoto = await db
+    //   .storage()
+    //   .ref("postImage")
+    //   .child(uniqePostId)
+    //   .getDownloadURL();
   };
 
-  //   const writeDataToFirestore = async () => {
-  //     try {
-  //       const docRef = await addDoc(collection(db, 'postImage'), {
-  //         camera, location, comments: []
+    const writeDataToFirestore = async () => {
+      try {
+        const photo = await uploadPhotoToServer();
 
-  //       });
-  //       console.log('Document written with ID: ', docRef.id);
-  //     } catch (e) {
-  //       console.error('Error adding document: ', e);
-  //         throw e;
-  //     }
-  // };
+        const docRef = await addDoc(collection(db, 'posts'), {
+         name,
+         photo,
+         mapLocation,
+         location,
+         userId,
+         user,
+        });
+        console.log('Document written with ID: ', docRef.id);
+      } catch (e) {
+        console.error('Error adding document: ', e);
+          throw e;
+      }
+  };
 
   // const getDataFromFirestore = async () => {
   //   try {
@@ -110,21 +138,24 @@ const CreatePostsScreen = ({ navigation }) => {
   //   }
   // };
 
-  const sendPhoto = () => {
-    uploadPhotoToServer();
-    navigation.navigate("Home", { photo, name, location });
-
+  const handleSubmit = () => {
+    if (!name || !photo) {
+      return console.warn("Fill in the fields")
+    }
+    writeDataToFirestore();
+    
     setName("")
     setPhoto(null)
-    setLocation("")
+    setMapLocation("")
+    navigation.navigate("Home", { photo, name, location });
   };
 
   const disabledButton = name === "" || photo === null;
 
   const clearPosts = () => {
     setPhoto(null);
-    setLocation("");
     setName("");
+    setMapLocation("");
   };
 
   const clearPostsButton = name === "" && location === "" && photo === null;
@@ -180,6 +211,7 @@ const CreatePostsScreen = ({ navigation }) => {
           placeholder="Locality..."
           placeholderTextColor="#BDBDBD"
           keyboardType="default"
+          value= {mapLocation}
           onChangeText={handleChangeMap}
         />
       </View>
@@ -188,7 +220,7 @@ const CreatePostsScreen = ({ navigation }) => {
         activeOpacity={0.8}
         disabled={disabledButton}
         style={!disabledButton ? styles.button : styles.disabledButton}
-        onPress={sendPhoto}
+        onPress={handleSubmit}
       >
         <Text
           style={

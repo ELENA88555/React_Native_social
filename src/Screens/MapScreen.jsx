@@ -22,6 +22,7 @@ const MapScreen = () => {
       </View>
 
       <MapView
+      showsUserLocation={true}
        provider={PROVIDER_GOOGLE}
         style={styles.mapStyle}
         region={{
