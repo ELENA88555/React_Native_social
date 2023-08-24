@@ -9,7 +9,7 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
+import { collection,setDoc, addDoc } from "firebase/firestore";
 
 const {  authSignOut } = authSlice.actions
  

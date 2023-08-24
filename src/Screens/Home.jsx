@@ -49,7 +49,7 @@ const Home = ({ route }) => {
         </View>
         <View style={styles.user}>
           <View style={styles.addPhoto}>
-            <Image style={styles.image} source={{ uri: userPhoto }} />
+            <Image style={styles.imageUser} source={{ uri: userPhoto }} />
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.email}>{email}</Text>
@@ -72,6 +72,7 @@ const Home = ({ route }) => {
                       photo: item.photo,
                       postId: item.id,
                       data: item.coments,
+                   
                     })
                   }
                 >
@@ -81,14 +82,16 @@ const Home = ({ route }) => {
 
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate("Map")}
+                  onPress={() => navigation.navigate("Map", item.location)}
                   style={styles.location}
                 >
                   <SimpleLineIcons name="location-pin" size={24} color="gray" />
+                  <Text style={styles.postAddress}>{item.mapLocation}</Text>
                 </TouchableOpacity>
               </View>
             </View>
-          )}
+          )
+        }
         />
 
         <TouchableOpacity
@@ -127,17 +130,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#763a3a",
     // overflow: "hidden",
+    
   },
-  image: {
-    // position: "absolute",
-    // width: "100%",
-    // height: "100%",
-    borderRadius: 16,
-    width: 60,
+  imageUser: {
     height: 60,
-    borderRadius: 16,
-    resizeMode: "cover",
-    marginBottom: 10,
+    width: 60,
+    borderRadius: 25,
+    borderWidth: 1,
   },
 
   signOut: {
@@ -199,6 +198,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginLeft: 5,
  
+  },
+  postAddress: {
+    fontSize: 16,
+    lineHeight: 19,
+    textDecorationLine: "underline",
+  },
+ location: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 9,
+    alignItems: "center",
   },
 });
 

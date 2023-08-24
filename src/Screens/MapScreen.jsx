@@ -33,12 +33,16 @@ const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
         mapType="standard"
-        minZoomLevel={15}
+        minZoomLevel={25}
         onMapReady={() => console.log("Map is ready")}
         onRegionChange={() => console.log("Region change")}
       >
         <Marker
           title="I am here"
+          // coordinate={{
+          //   latitude: params.latitude,
+          //   longitude: params.longitude,
+          // }}
           coordinate={{
             latitude: 51.493680,
             longitude: 31.294689,
