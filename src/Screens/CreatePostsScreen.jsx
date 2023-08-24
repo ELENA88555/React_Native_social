@@ -189,7 +189,7 @@ const CreatePostsScreen = ({ navigation }) => {
     navigation.navigate("Home", { photo, name, location, mapLocation});
   };
 
-  const disabledButton = name === "" || photo === null;
+  const disabledButton = name === "" || photo === null || mapLocation === ""
 
   const clearPosts = () => {
     setPhoto(null);

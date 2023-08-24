@@ -33,7 +33,7 @@ const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
         mapType="standard"
-        minZoomLevel={25}
+        minZoomLevel={15}
         onMapReady={() => console.log("Map is ready")}
         onRegionChange={() => console.log("Region change")}
       >

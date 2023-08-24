@@ -90,7 +90,7 @@ const Registration = ({ navigation }) => {
     dispatch(authSignUpUser(state));
     setState(initiatState);
 
-    navigation.navigate("Home", { nickName, userPhoto, email });
+    navigation.navigate("Home", { initiatState});
   };
 
   const takePhoto = async () => {
