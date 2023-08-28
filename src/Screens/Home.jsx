@@ -16,6 +16,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Fontisto } from "@expo/vector-icons";
 import { selectEmail, selectNickName } from "../redux/auth/authSelector";
 import { selectUserPhoto } from "../redux/auth/authSelector";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const Home = ({ route }) => {
   const email = useSelector(selectEmail);
@@ -26,6 +28,36 @@ const Home = ({ route }) => {
   const [posts, setPosts] = useState([]);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+
+  // const getAllPosts = async () => {
+  //   try {
+  //     await onSnapshot(collection(db, "posts"), (data) => {
+  //       const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  //       setPosts(posts);
+  //     });
+  //   } catch (error) {
+  //     console.log(error.massage);
+  //     Alert.alert("Try again");
+  //   }
+  // };
+
+
+
+  const getDataFromFirestore = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, 'posts'));
+            // Перевіряємо у консолі отримані дані
+      snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+            // Повертаємо масив обʼєктів у довільній формі
+            return snapshot.map((doc) => ({ id: doc.id, data: doc.data() }));
+    } catch (error) {
+      console.log(error);
+            throw error;
+    }
+  };
+
+
 
   useEffect(() => {
     if (route.params) {

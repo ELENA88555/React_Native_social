@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { View, Text } from "react-native";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { app, db, storage } from "../../firebase/config";
+import { db, storage } from "../../firebase/config";
 import { collection, setDoc, addDoc } from "firebase/firestore";
 import { selectNickName, selectUserId } from "../redux/auth/authSelector";
 import { useSelector } from "react-redux";
@@ -47,20 +47,6 @@ const CreatePostsScreen = ({ navigation }) => {
     })();
   }, []);
 
-  const checUserkLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      console.log("Permission to access location was denied");
-      return;
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-    setLocation(coords);
-  };
 
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
@@ -107,6 +93,28 @@ const CreatePostsScreen = ({ navigation }) => {
     });
   };
 
+
+  // const uploadPhotoToServer = async (uri) => {
+  //   const response = await fetch(photo);
+
+  //   const file = await response.blob();
+
+  //   const uniquePostId = Date.now().toString();
+  //   const storageRef = ref(
+  //     storage,
+  //     `postImage/${uniquePostId}/${file.data.name}`
+  //   );
+
+  //   await uploadBytes(storageRef, file);
+
+  //   const downloadURL = await getDownloadURL(storageRef);
+
+  //   return downloadURL;
+  // };
+
+
+
+
   const uploadPhotoToServer = async () => {
     const body = await uriToBlob(photo);
     const response = await fetch(body);
@@ -148,7 +156,7 @@ const CreatePostsScreen = ({ navigation }) => {
     try {
       const photo = await uploadPhotoToServer();
 
-      const docRef = await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "posts"), {
         name,
         photo,
         mapLocation,
@@ -157,7 +165,7 @@ const CreatePostsScreen = ({ navigation }) => {
         user,
       });
 
-      console.log("Document written with ID: ", docRef.id);
+      // console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
       throw e;
@@ -197,7 +205,7 @@ const CreatePostsScreen = ({ navigation }) => {
     setMapLocation("");
   };
 
-  // checUserkLocation()
+
 
   const clearPostsButton = name === "" && photo === null;
   return (

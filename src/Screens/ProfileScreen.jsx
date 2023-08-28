@@ -19,6 +19,12 @@ const ProfileScreen = () => {
   const userPhoto = useSelector(selectUserPhoto);
   const [photoUri, setPhotoUri] = useState(userPhoto ?? null);
 
+
+
+
+
+
+  
   const signOut = () => {
     dispatch(authSingOutUser());
   };
