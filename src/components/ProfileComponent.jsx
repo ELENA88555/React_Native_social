@@ -10,52 +10,54 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import { Fontisto } from "@expo/vector-icons";
+import { useState } from "react";
+
 const ProfileComponent = ({ posts }) => {
   const navigation = useNavigation();
+ 
+
 
   return (
-    posts.length > 0 && (
+    posts && (
       <ScrollView>
         {posts.map((post) => {
           return (
             <View key={post.id} style={styles.newPost}>
               <Image style={styles.image} source={{ uri: post.photo }} />
+
               <Text style={styles.name}>{post.name}</Text>
               <View style={styles.content}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 27,
-                    marginTop: 11,
-                  }}
-                >
+                <View style={styles.commentsPost}>
                   <TouchableOpacity
                     style={styles.comments}
                     onPress={() =>
-                      navigation.navigate("Comments", {
+                      navigation.navigate("Coments", {
                         photo: post.photo,
                         postId: post.id,
-                      })
+                      }
+                      )
                     }
                   >
+                    <Fontisto name="hipchat" size={24} color="#BDBDBD" />
+                    {/* <Text>{post.comments.length}</Text> */}
+                  </TouchableOpacity>
+
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Map", post.location)}
+                    style={styles.comments}
+                    disabled={post.location === null}
+                  >
                     <Ionicons
-                      name="chatbubbles-outline"
+                      name="location-outline"
                       size={24}
                       color="#BDBDBD"
                     />
-                    <Text>{post.comments.length}</Text>
+
+                    <Text style={styles.address}>{post.location}</Text>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Map", post.location)}
-                  style={styles.comments}
-                  disabled={post.location === null}
-                >
-                  <Ionicons name="location-outline" size={24} color="#BDBDBD" />
-
-                  <Text style={styles.address}>{post.address}</Text>
-                </TouchableOpacity>
               </View>
             </View>
           );
@@ -67,39 +69,46 @@ const ProfileComponent = ({ posts }) => {
 
 const styles = StyleSheet.create({
   newPost: {
-    marginBottom: 34,
+    marginBottom: 24,
+    paddingHorizontal: 6,
   },
   image: {
     width: "100%",
     height: 240,
-
     borderWidth: 1,
     borderRadius: 8,
   },
   name: {
-    fontFamily: "Roboto-Medium",
     fontSize: 16,
     lineHeight: 19,
     marginTop: 8,
   },
   content: {
-    display: "flex",
+    flex: 1,
     flexDirection: "row",
     alignPosts: "baseline",
     justifyContent: "space-between",
   },
   comments: {
-    display: "flex",
+    // display: "flex",
     flexDirection: "row",
     gap: 9,
     alignPosts: "center",
+  },
+  commentsPost: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginTop: 5,
+    // marginBottom: 10,
   },
   address: {
     fontSize: 16,
     lineHeight: 19,
     textDecorationLine: "underline",
   },
-  postAddressDisable: {
+  postAddress: {
     fontSize: 16,
     lineHeight: 19,
   },

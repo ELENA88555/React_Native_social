@@ -29,41 +29,29 @@ const Home = ({ route }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-
-  // const getAllPosts = async () => {
-  //   try {
-  //     await onSnapshot(collection(db, "posts"), (data) => {
-  //       const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //       setPosts(posts);
-  //     });
-  //   } catch (error) {
-  //     console.log(error.massage);
-  //     Alert.alert("Try again");
-  //   }
-  // };
-
-
-
-  const getDataFromFirestore = async () => {
+  const getAllPosts = async () => {
     try {
-      const snapshot = await getDocs(collection(db, 'posts'));
-            // Перевіряємо у консолі отримані дані
-      snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-            // Повертаємо масив обʼєктів у довільній формі
-            return snapshot.map((doc) => ({ id: doc.id, data: doc.data() }));
+       onSnapshot(collection(db, "posts"), (data) => {
+        const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setPosts(posts);
+      });
     } catch (error) {
-      console.log(error);
-            throw error;
+      console.log(error.massage);
+      Alert.alert("Try again");
     }
   };
 
 
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    getAllPosts();
+  }, []);
+
+  // useEffect(() => {
+  //   if (route.params) {
+  //     setPosts((prevState) => [...prevState, route.params]);
+  //   }
+  // }, [route.params]);
 
   const signOut = () => {
     dispatch(authSingOutUser());
@@ -103,13 +91,14 @@ const Home = ({ route }) => {
                     navigation.navigate("Coments", {
                       photo: item.photo,
                       postId: item.id,
-                      data: item.coments,
-                   
+                      data: item.comments,
+                      userPhoto: item.userPhoto,
                     })
                   }
                 >
                   <Fontisto name="hipchat" size={24} color="gray" />
-                  <Text>{item.coments}</Text>
+                  <Text>{item.comments}</Text>
+                  {/* <Text>{item.comments.length}</Text> */}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -122,8 +111,7 @@ const Home = ({ route }) => {
                 </TouchableOpacity>
               </View>
             </View>
-          )
-        }
+          )}
         />
 
         <TouchableOpacity
@@ -162,7 +150,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#763a3a",
     // overflow: "hidden",
-    
   },
   imageUser: {
     height: 60,
@@ -196,7 +183,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   post: {
-    display: "flex",
+    flex: 1,
     flexDirection: "row",
     alignItems: "baseline",
     justifyContent: "space-between",
@@ -229,14 +216,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     paddingVertical: 12,
     marginLeft: 5,
- 
   },
   postAddress: {
     fontSize: 16,
     lineHeight: 19,
     textDecorationLine: "underline",
   },
- location: {
+  location: {
     display: "flex",
     flexDirection: "row",
     gap: 9,

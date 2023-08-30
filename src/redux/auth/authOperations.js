@@ -50,7 +50,7 @@ export const updateUserProfile = async (photoURL) => {
 // };
 
 
-export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
+export const authSignUpUser = ({ email, password,nickName, photoURL }) =>
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const { user } = userCredential;
@@ -60,12 +60,13 @@ export const authSignUpUser = ({ email, password,nickName, userPhoto }) =>
       authSlice.actions.updateUserProfile({
         userId: user.uid,
         nickName:  user.displayName,
-        userPhoto: user.photoURL
+        photoURL: user.photoURL
       });
 
       const docRef = addDoc(collection(db, "users"), {
         name: displayName,
         email,
+   
       });
     })
     .catch((error) => {

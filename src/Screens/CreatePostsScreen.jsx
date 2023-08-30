@@ -25,29 +25,24 @@ const CreatePostsScreen = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [commentNumber, setCommentNumber] = useState(0);
   const [mapLocation, setMapLocation] = useState("");
-
   const userId = useSelector(selectUserId);
   const user = useSelector(selectNickName);
 
   useEffect(() => {
-
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
-      const  coords = await{
+      const coords = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
       setLocation(coords);
     })();
   }, []);
-
-
   const takePhoto = async () => {
     const { uri } = await camera.takePictureAsync();
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -55,31 +50,25 @@ const CreatePostsScreen = ({ navigation }) => {
       setErrorMsg("Permission to access location was denied");
       return;
     }
-
     const location = await Location.getCurrentPositionAsync({});
     const coords = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
-
     console.log(location.coords.latitude);
     console.log(location.coords.longitude);
     setLocation(coords);
     setPhoto(uri);
-    // uriToBlob(uri)
     console.log(uri);
   };
-
   const handleChangeName = (value) => {
     setName(value);
   };
-
   const handleChangeMap = (value) => {
     setMapLocation(value);
   };
-
-  const uriToBlob = (photo) => {
-    return new Promise((resolve, reject) => {
+  const uriToBlob = async (photo) => {
+    return await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
         resolve(xhr.response);
@@ -93,60 +82,23 @@ const CreatePostsScreen = ({ navigation }) => {
     });
   };
 
-
-  // const uploadPhotoToServer = async (uri) => {
-  //   const response = await fetch(photo);
-
-  //   const file = await response.blob();
-
-  //   const uniquePostId = Date.now().toString();
-  //   const storageRef = ref(
-  //     storage,
-  //     `postImage/${uniquePostId}/${file.data.name}`
-  //   );
-
-  //   await uploadBytes(storageRef, file);
-
-  //   const downloadURL = await getDownloadURL(storageRef);
-
-  //   return downloadURL;
-  // };
-
-
-
-
   const uploadPhotoToServer = async () => {
-    const body = await uriToBlob(photo);
-    const response = await fetch(body);
-
-    const file = await response.blob();
-
+    const file = await uriToBlob(photo);
     const uniqePostId = Date.now().toString();
-
-    // const data = await app.storage().ref(`postImage/${uniqePostId}`).put(file)
-    const data = await ref(storage, `postImage/${uniqePostId}/${file}`);
+    const data = ref(storage, `postImage/${uniqePostId}`);
     console.log(data);
     await uploadBytes(data, file);
-
-    // const processedPhoto = await db
-    //   .storage()
-    //   .ref("postImage")
-    //   .child(uniqePostId)
-    //   .getDownloadURL();
     const processedPhoto = await getDownloadURL(data);
     console.log(processedPhoto);
     return processedPhoto;
   };
-
   const choosePhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
       console.log("Permission to access media library denied");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync();
-
     if (!result.didCancel) {
       setPhoto(result.assets[0].uri);
     }
@@ -172,18 +124,7 @@ const CreatePostsScreen = ({ navigation }) => {
     }
   };
 
-  // const getDataFromFirestore = async () => {
-  //   try {
-  //     const snapshot = await getDocs(collection(db, 'users'));
-  //
-  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-  //
-  //           return snapshot.map((doc) => ({ id: doc.id, data: doc.data() });
-  //   } catch (error) {
-  //     console.log(error);
-  //           throw error;
-  //   }
-  // };
+
 
   const handleSubmit = () => {
     if (!name || !photo) {
@@ -194,18 +135,16 @@ const CreatePostsScreen = ({ navigation }) => {
     setName("");
     setPhoto(null);
     setMapLocation("");
-    navigation.navigate("Home", { photo, name, location, mapLocation});
+    navigation.navigate("Home", { photo, name, location, mapLocation });
   };
 
-  const disabledButton = name === "" || photo === null || mapLocation === ""
+  const disabledButton = name === "" || photo === null || mapLocation === "";
 
   const clearPosts = () => {
     setPhoto(null);
     setName("");
     setMapLocation("");
   };
-
-
 
   const clearPostsButton = name === "" && photo === null;
   return (
