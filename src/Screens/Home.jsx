@@ -37,7 +37,7 @@ const Home = ({ route }) => {
       });
     } catch (error) {
       console.log(error.massage);
-      Alert.alert("Try again");
+    
     }
   };
 
@@ -69,7 +69,17 @@ const Home = ({ route }) => {
         </View>
         <View style={styles.user}>
           <View style={styles.addPhoto}>
-            <Image style={styles.imageUser} source={{ uri: userPhoto }} />
+          { userPhoto ? (
+                <Image source={{ uri:  userPhoto }} style={styles.imageUser} />
+              ) : (
+                <Image
+                  source={{
+                    uri: "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?ssl=1",
+                  }}
+                  style={styles.imageUser}
+                />
+              )}
+            {/* <Image style={styles.imageUser} source={{ uri: userPhoto }} /> */}
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.email}>{email}</Text>
@@ -147,14 +157,12 @@ const styles = StyleSheet.create({
     height: 60,
     // backgroundColor: "#763a3a",
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#763a3a",
-    // overflow: "hidden",
+    overflow: "hidden",
   },
   imageUser: {
     height: 60,
     width: 60,
-    borderRadius: 25,
+    borderRadius: 16,
     borderWidth: 1,
   },
 

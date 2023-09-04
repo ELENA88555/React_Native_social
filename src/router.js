@@ -44,7 +44,7 @@ export const useRoute = (isLogin) => {
         tabBarStyle: ((route) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "";
 
-          if (routeName === "CreatePosts") {
+          if (routeName === "CreatePosts" || routeName === "Coments") {
             return { display: "none" };
           }
           return { display: "flex" };

@@ -1,4 +1,4 @@
-import { auth } from "../../../firebase/config";
+import { auth, db} from "../../../firebase/config";
 
 import { authSlice } from "./authReducer";
 
@@ -11,20 +11,37 @@ import {
 } from "firebase/auth";
 import { collection,setDoc, addDoc } from "firebase/firestore";
 
-const {  authSignOut } = authSlice.actions
+const {  authSignOut, updateUserProfile } = authSlice.actions
  
 
-export const updateUserProfile = async (photoURL) => {
-  const user = auth.currentUser;
+// export const updateUserProfile = async ({photoURL}) => {
+//   const user = auth.currentUser;
 
-  if (user) {
-     try {
-      await updateProfile(user,  {photoURL: photoURL},);
-    } catch (error) {
-      throw error;
-    }
-  }
-};
+//   if (user) {
+//      try {
+//       await updateProfile(user,  {photoURL: photoURL});
+//     } catch (error) {
+//       throw error;
+//     }
+//   }
+// };
+
+
+export const updateUserProfiles =  async ({ photoURL,displayName}) => {
+
+  const user = auth.currentUser;
+  await updateProfile(user, {
+    photoURL: photoURL, nickName: displayName,
+  }).then(() => {
+
+ return  photoURL,displayName 
+
+  }).catch((error) => {
+    throw error;
+  });
+}
+
+
 
 
 
@@ -55,7 +72,7 @@ export const authSignUpUser = ({ email, password,nickName, photoURL }) =>
     .then((userCredential) => {
       const { user } = userCredential;
       const currentUser = auth.currentUser;
-      currentUser.updateProfile({ displayName: nickName });
+    updateProfile( currentUser,  { displayName: nickName, photoURL: photoURL });
 
       authSlice.actions.updateUserProfile({
         userId: user.uid,
@@ -64,13 +81,13 @@ export const authSignUpUser = ({ email, password,nickName, photoURL }) =>
       });
 
       const docRef = addDoc(collection(db, "users"), {
-        name: displayName,
+        displayName,
         email,
    
       });
     })
     .catch((error) => {
-      console.log( error.message);
+      console.warn( error.message);
     });
 
 
@@ -105,7 +122,6 @@ export const authSignUpUser = ({ email, password,nickName, photoURL }) =>
 
       
 
-
 export const authStateChanged = () => async (dispatch, getState) => {
   await  onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -113,7 +129,9 @@ export const authStateChanged = () => async (dispatch, getState) => {
         nickName: user.displayName,
         userId: user.uid,
         email: user.email,
+        photoURL: user.photoURL,
       };
+      
       dispatch(authSlice.actions.authStateChange({stateChange: true}))
       dispatch(authSlice.actions.updateUserProfile(userUpdateProfile))
     }
@@ -123,15 +141,34 @@ export const authStateChanged = () => async (dispatch, getState) => {
 
 
 
-
 export const authSingIn = async ({ email, password }) => {
   try {
     const credentials = await signInWithEmailAndPassword(auth, email, password);
     return credentials.user;
   } catch (error) {
-    throw error;
+    throw error; 
   }
 };
+ 
+// export const authSingIn = 
+//   () => async (dispatch, state) => {
+//     try {
+//       const user = await signInWithEmailAndPassword(auth, email, password);
+
+//       const { uid, displayName, photoURL, email } = user.user;
+
+//       const userProfile = {
+//         nickName: displayName,
+//         email: email,
+//         userId: uid,
+//         photoURL: photoURL,
+//       };
+
+//       dispatch(updateUserProfile(userProfile));
+//     } catch (error) {
+//       return error.code;
+//     }
+//   };
 
 
 

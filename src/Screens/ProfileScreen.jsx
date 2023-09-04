@@ -9,7 +9,7 @@ import { auth, db } from "../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
 import {
   authSingOutUser,
-  updateUserProfile,
+  updateUserProfiles,
 } from "../redux/auth/authOperations";
 import ImageBackgroundScreen from "../components/ImageBackground";
 import {
@@ -20,7 +20,14 @@ import {
 } from "../redux/auth/authSelector";
 import { updateProfile } from "firebase/auth";
 import { authSlice } from "../redux/auth/authReducer";
-import { onSnapshot, collection, where, query,getDocs } from "firebase/firestore";
+import {
+  onSnapshot,
+  collection,
+  where,
+  query,
+  getDocs,
+  orderBy,
+} from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import ProfileComponent from "../components/ProfileComponent";
 import { FlatList } from "react-native-gesture-handler";
@@ -38,54 +45,78 @@ const ProfileScreen = () => {
 
   // const getPosts = async () => {
   //   try {
-  //     const querySnapshot = await getDocs( query( collection(db, "posts"), where("userId", "==", "userId")));
-
-  //     await onSnapshot(querySnapshot, (data) => {
-  //       const posts =   data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //       setPosts(posts);
-  //     });
+  //     const snapshot = await getDocs(collection(db, 'posts'));
+  //           // Перевіряємо у консолі отримані дані
+  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+  //           // Повертаємо масив обʼєктів у довільній формі
+  //           const posts = snapshot.map((doc) => ({ id: doc.id, data: doc.data() }))
+  //           return setPosts(posts);
   //   } catch (error) {
-  //     console.log(error.massage);
-     
+  //     console.log(error);
+  //           throw error;
+  //   }
+  // };
+
+  // const getPosts = async () => {
+  //   try {
+  //     const snapshot = await getDocs(collection(db, 'posts'), where("userId", "==", userId));
+  //           // Перевіряємо у консолі отримані дані
+  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
+  //           // Повертаємо масив обʼєктів у довільній формі
+  //           const posts = snapshot.map((doc) => ({ id: doc.id, data: doc.data() }))
+  //           setPosts(posts);
+  //   } catch (error) {
+  //     console.log(error);
+  //           throw error;
   //   }
   // };
 
   const getPosts = async () => {
-    const q = query(collection(db, "posts"), where("userId", "==", "userId"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      // const posts = [];
-      const posts =    querySnapshot.forEach((doc) => {
-          posts.push(doc.data().posts);
-      });
-      setPosts(posts)
-      console.log("Current userId in posts: ");
+    const q = query(collection(db, "posts"), where("userId", "==", userId));
+
+    const querySnapshot = await getDocs(q);
+    const newPosts = querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
     });
-   };
+    setPosts(newPosts);
+  };
 
   // const getPosts = async () => {
-  //   const q = await getDocs(query(collection(db, "posts"), where("userId", "==", "userId")))
-  //   await onSnapshot(q, (data) => {
-  //     // const posts = [];
-  //     const posts = data.docs.map((doc) => ({ ...doc.data()}));
-  //     setPosts(posts);
+  //   try {
+  //      onSnapshot(collection(db, "posts"), where("userId", "==", userId), (data) => {
+  //       const posts = data.docs.map((doc) => ({ ...doc.data() }));
+  //       setPosts(posts);
+  //       console.log(posts)
+  //     });
+  //   } catch (error) {
+  //     console.log(error.massage);
 
-  //     console.log("Current userId in posts: ", posts.join(", "));
-  //   });
+  //   }
   // };
 
   //   const getPosts = async () => {
   //   try {
-  //     await onSnapshot(collection(db, "posts"), (data) => {
+  //      onSnapshot(collection(db, "posts"), (data) => {
   //       const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
   //       setPosts(posts);
   //     });
   //   } catch (error) {
-  //     console.log(error.massage);
-  //     alert("Try again");
+  //     console.warn(error.massage);
+
   //   }
   // };
 
+  //   const getPosts = async () => {
 
+  //     await getDocs(collection(db, "posts"), where(userId, "==", userId))
+  //         .then((querySnapshot)=>{
+  //             const newPosts = querySnapshot.docs
+  //                 .map((doc) => ({...doc.data(), id:doc.id }));
+  //             setPosts(newPosts);
+  //             console.log(posts, newPosts);
+  //         })
+
+  // }
 
   useEffect(() => {
     getPosts();
@@ -97,7 +128,7 @@ const ProfileScreen = () => {
 
   const choosePhoto = async () => {
     if (photoUri) {
-      dispatch(updateUserProfile({ photoURL: "" }));
+      dispatch(updateUserProfiles({ photoURL: "" }));
       dispatch(authSlice.changePhoto(""));
       setPhotoUri(null);
       return;
@@ -111,7 +142,7 @@ const ProfileScreen = () => {
 
     if (!result.canceled) {
       setPhotoUri(result.assets[0].uri);
-      dispatch(updateUserProfile({ photoURL: result.assets[0].uri }));
+      dispatch(updateUserProfiles({ photoURL: result.assets[0].uri }));
       dispatch(authSlice.changePhoto(result.assets[0].uri));
     }
   };
@@ -152,41 +183,64 @@ const ProfileScreen = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.title}>
-              <Text style={styles.titleText}>Name:{displayName}</Text>
+              <Text style={styles.titleText}>{displayName}</Text>
             </View>
-            <FlatList
-            // data={posts}
-            // keyExtractor={(item, indx) => item + indx.toString()}
-            // renderItem={({ item }) => (
-            //   <View style={styles.userPosts}>
-            //     <Image style={styles.image} source={{ uri: item.photo }} />
-            //     <Text style={styles.name}>{item.name}</Text>
-            //     <TouchableOpacity
-            //           style={styles.comments}
-            //           onPress={() =>
-            //             navigation.navigate("Comments", {
-            //               photo: item.photo,
-            //               postId: item.id,
-            //             })
-            //           }
-            //         >
-            //           <Fontisto name="hipchat" size={24} color="gray" />
-            //           {/* <Text>{item.comments.length}</Text> */}
-            //         </TouchableOpacity>
-            //         <TouchableOpacity
-            //         onPress={() => navigation.navigate("Map", item.location)}
-            //         style={styles.comments}
-            //         disabled={item.location === null}
-            //       >
-            //         <Ionicons name="location-outline" size={24} color="#BDBDBD" />
-
-            //         <Text style={styles.address}>{item.address}</Text>
-            //       </TouchableOpacity>
-            //   </View>
-            // )}
-            />
           </View>
-          <ProfileComponent posts={posts}></ProfileComponent>
+          {posts ? (
+            <FlatList
+              data={posts}
+              keyExtractor={(item, indx) => item + indx.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.userPosts}>
+                  <Image style={styles.images} source={{ uri: item.photo }} />
+                  <Text style={styles.name}>{item.name}</Text>
+                  <View style={styles.content}>
+                    <TouchableOpacity
+                      style={styles.comments}
+                      onPress={() =>
+                        navigation.navigate("Comments", {
+                          photo: item.photo,
+                          postId: item.id,
+                        })
+                      }
+                    >
+                      {/* <Ionicons name="ios-chatbubbles-sharp" size={24} color="#FF6C00" /> */}
+                      <Fontisto name="hipchat" size={24} color="#FF6C00" />
+                      {/* <Text>{item.comments.length}</Text> */}
+                    </TouchableOpacity>
+                    {/* <View style={styles.content}> */}
+                    <Text style={styles.address}>{item.mapLocation}</Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Map", item.location)}
+                      style={styles.comments}
+                      disabled={item.location === null}
+                    >
+                      <Ionicons
+                        name="location-outline"
+                        size={24}
+                        color="#BDBDBD"
+                      />
+                    </TouchableOpacity>
+                    {/* </View> */}
+                  </View>
+                </View>
+              )}
+            />
+          ) : (
+            <View>
+              <TouchableOpacity
+                style={styles.containerAdd}
+                onPress={() => navigation.navigate("CreatePosts")}
+              >
+                <Text style={styles.text}>Create your first posts</Text>
+                <View style={styles.containerForm}>
+                  <Ionicons style={styles.plus} name="add-outline" size={24} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* <ProfileComponent posts={posts}></ProfileComponent> */}
         </View>
       </ImageBackgroundScreen>
     </View>
@@ -279,7 +333,14 @@ const styles = StyleSheet.create({
     color: "#20232a",
     fontSize: 30,
   },
-
+  text: {
+    textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 73,
+    color: "#20232a",
+    fontSize: 20,
+  },
   // container: {
   //   flex: 1,
 
@@ -401,9 +462,9 @@ const styles = StyleSheet.create({
 
   // },
   // userPosts: {
-  //   position: "absolute",
+
   //   flex: 1,
-  //   // display: "flex",
+  //   display: "flex",
   //   flexDirection: "row",
   //   alignItems: "baseline",
   //   justifyContent: "space-between",
@@ -419,6 +480,76 @@ const styles = StyleSheet.create({
   //   backgroundColor: "#671010",
 
   // },
+  newPost: {
+    marginBottom: 24,
+    paddingHorizontal: 6,
+  },
+  images: {
+    width: "100%",
+    height: 240,
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  name: {
+    fontSize: 16,
+    lineHeight: 19,
+    marginTop: 8,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  comments: {
+    // display: "flex",
+    flexDirection: "row",
+    gap: 9,
+    alignPosts: "center",
+  },
+  commentsPost: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginTop: 5,
+    // marginBottom: 10,
+  },
+  address: {
+    padding: 0,
+    marginLeft: 200,
+    fontSize: 16,
+    lineHeight: 19,
+    textDecorationLine: "underline",
+  },
+  postAddress: {
+    fontSize: 16,
+    lineHeight: 19,
+  },
+  containerForm: {
+    // flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    height: 40,
+    width: 70,
+    // alignPosts: "center",
+    borderRadius: 20,
+    backgroundColor: "#FF6C00",
+  },
+  plus: {
+    // flex: 1,
+    color: "#fff",
+    alignItems: "center",
+  },
+  containerAdd: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    gap: 20,
+  },
 });
 
 export default ProfileScreen;
