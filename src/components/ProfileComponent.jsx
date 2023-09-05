@@ -19,8 +19,8 @@ const ProfileComponent = ({ posts }) => {
 
 
   return (
+    <View>
     posts && (
-      <View>
         {posts.map((post) => {
           return (
             <View key={post.id} style={styles.newPost}>
@@ -62,8 +62,8 @@ const ProfileComponent = ({ posts }) => {
             </View>
           );
         })}
-      </View>
     )
+      </View>
   );
 };
 
