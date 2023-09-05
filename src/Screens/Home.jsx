@@ -209,9 +209,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 32,
   },
-  // display: "flex",
-  // flexDirection: "column",
-  // justifyContent: "center",
 
   email: {
     fontWeight: 400,

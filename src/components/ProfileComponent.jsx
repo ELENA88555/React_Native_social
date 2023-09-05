@@ -20,7 +20,7 @@ const ProfileComponent = ({ posts }) => {
 
   return (
     posts && (
-      <ScrollView>
+      <View>
         {posts.map((post) => {
           return (
             <View key={post.id} style={styles.newPost}>
@@ -62,7 +62,7 @@ const ProfileComponent = ({ posts }) => {
             </View>
           );
         })}
-      </ScrollView>
+      </View>
     )
   );
 };

@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
-import { View, Image, Text, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity, FlatList} from "react-native";
 import { auth, db } from "../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +30,7 @@ import {
 } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import ProfileComponent from "../components/ProfileComponent";
-import { FlatList } from "react-native-gesture-handler";
+// import { FlatList } from "react-native-gesture-handler";
 
 const ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -44,79 +44,28 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
 
   // const getPosts = async () => {
-  //   try {
-  //     const snapshot = await getDocs(collection(db, 'posts'));
-  //           // Перевіряємо у консолі отримані дані
-  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-  //           // Повертаємо масив обʼєктів у довільній формі
-  //           const posts = snapshot.map((doc) => ({ id: doc.id, data: doc.data() }))
-  //           return setPosts(posts);
-  //   } catch (error) {
-  //     console.log(error);
-  //           throw error;
-  //   }
-  // };
+  //   const q = query(collection(db, "posts"), where("userId", "==", userId));
 
-  // const getPosts = async () => {
-  //   try {
-  //     const snapshot = await getDocs(collection(db, 'posts'), where("userId", "==", userId));
-  //           // Перевіряємо у консолі отримані дані
-  //     snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-  //           // Повертаємо масив обʼєктів у довільній формі
-  //           const posts = snapshot.map((doc) => ({ id: doc.id, data: doc.data() }))
-  //           setPosts(posts);
-  //   } catch (error) {
-  //     console.log(error);
-  //           throw error;
-  //   }
+  //   const querySnapshot = await getDocs(q);
+  //   const newPosts = querySnapshot.forEach((doc) => {
+  //     console.log(doc.id, " => ", doc.data());
+  //   });
+  //   setPosts(newPosts);
   // };
 
   const getPosts = async () => {
     const q = query(collection(db, "posts"), where("userId", "==", userId));
 
     const querySnapshot = await getDocs(q);
-    const newPosts = querySnapshot.forEach((doc) => {
+    let  posts = []
+   querySnapshot.forEach((doc) => {
+      posts.push(  {id: doc.id, ...doc.data()} )
       console.log(doc.id, " => ", doc.data());
     });
-    setPosts(newPosts);
+   
+    setPosts(posts);
   };
 
-  // const getPosts = async () => {
-  //   try {
-  //      onSnapshot(collection(db, "posts"), where("userId", "==", userId), (data) => {
-  //       const posts = data.docs.map((doc) => ({ ...doc.data() }));
-  //       setPosts(posts);
-  //       console.log(posts)
-  //     });
-  //   } catch (error) {
-  //     console.log(error.massage);
-
-  //   }
-  // };
-
-  //   const getPosts = async () => {
-  //   try {
-  //      onSnapshot(collection(db, "posts"), (data) => {
-  //       const posts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //       setPosts(posts);
-  //     });
-  //   } catch (error) {
-  //     console.warn(error.massage);
-
-  //   }
-  // };
-
-  //   const getPosts = async () => {
-
-  //     await getDocs(collection(db, "posts"), where(userId, "==", userId))
-  //         .then((querySnapshot)=>{
-  //             const newPosts = querySnapshot.docs
-  //                 .map((doc) => ({...doc.data(), id:doc.id }));
-  //             setPosts(newPosts);
-  //             console.log(posts, newPosts);
-  //         })
-
-  // }
 
   useEffect(() => {
     getPosts();
@@ -129,7 +78,7 @@ const ProfileScreen = () => {
   const choosePhoto = async () => {
     if (photoUri) {
       dispatch(updateUserProfiles({ photoURL: "" }));
-      dispatch(authSlice.changePhoto(""));
+      // dispatch(authSlice.changePhoto(""));
       setPhotoUri(null);
       return;
     }
@@ -198,7 +147,7 @@ const ProfileScreen = () => {
                     <TouchableOpacity
                       style={styles.comments}
                       onPress={() =>
-                        navigation.navigate("Comments", {
+                        navigation.navigate("Coments", {
                           photo: item.photo,
                           postId: item.id,
                         })
@@ -206,7 +155,7 @@ const ProfileScreen = () => {
                     >
                       {/* <Ionicons name="ios-chatbubbles-sharp" size={24} color="#FF6C00" /> */}
                       <Fontisto name="hipchat" size={24} color="#FF6C00" />
-                      {/* <Text>{item.comments.length}</Text> */}
+                      {/* <Text style={styles.name} >{item.comments.length}</Text> */}
                     </TouchableOpacity>
                     {/* <View style={styles.content}> */}
                     <Text style={styles.address}>{item.mapLocation}</Text>

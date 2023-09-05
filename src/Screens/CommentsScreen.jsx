@@ -33,7 +33,7 @@ import { useEffect } from "react";
 const ComentsScreen = ({ route }) => {
   const { postId } = route.params;
   const { params } = useRoute();
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   // const [userPhoto, setuserPhoto] = useState("");
   const [count, setCount] = useState(0);
@@ -86,21 +86,7 @@ const ComentsScreen = ({ route }) => {
     }
   };
 
-  // const handleSubmit = () => {
-  //   if (comment.trim() === "") {
-  //     return;
-  //   }
 
-  //   addComment({
-  //     postId: params.postId,
-  //     newComment: { date: Date.now(), text: comment, avatar: avatar },
-  //   });
-  //   setComment("");
-  // };
-
-  // const date = (date) => {
-  //   return format(date, "dd MMMM, yyyy | HH:mm");
-  // };
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
