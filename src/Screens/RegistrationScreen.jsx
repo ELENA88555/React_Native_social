@@ -14,8 +14,12 @@ import {
   Keyboard,
   Pressable,
   Button,
-  Image,
+  Image, 
 } from "react-native";
+
+import "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, setDoc, addDoc } from "firebase/firestore";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import ImageBackgroundScreen from "../components/ImageBackground";
@@ -26,6 +30,7 @@ import { useTogglePasswordVisibility } from "../../hooks/useTogglePasswordVisibi
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Dimensions } from "react-native";
 import { useEffect } from "react";
+import { storage, db } from "../../firebase/config";
 
 const initiatState = {
   nickName: "",
@@ -46,14 +51,14 @@ const Registration = ({ navigation }) => {
     useTogglePasswordVisibility();
   const [password, setPassword] = useState("");
 
-  const [dimensions, setdimensions] = useState(
+  const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 20 * 2
   );
 
   useEffect(() => {
     const onChange = () => {
       const width = Dimensions.get("window").width - 20 * 2;
-      setdimensions(width);
+      setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
 
@@ -93,24 +98,78 @@ const Registration = ({ navigation }) => {
     navigation.navigate("Home", { initiatState});
   };
 
-  const takePhoto = async () => {
-    // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    // if (status !== "granted") {
-    //   console.log("Insufficient permissions!");
-    //   return;
-    // }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+
+
+  const uriToBlob = async (userPhoto) => {
+    return await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function () {
+        reject(new Error("uriToBlob failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", userPhoto, true);
+      xhr.send(null);
+ 
     });
+  };
 
-    if (!result.canceled) {
-      setUserPhoto(result.assets[0].uri);
+  const uploadPhotoToServer = async () => {
+    const file = await uriToBlob( userPhoto);
+    const uniqePostId = Date.now().toString();
+    const data = ref(storage, `postImage/${uniqePostId}`);
+    console.log(data);
+    await uploadBytes(data, file);
+    const processedPhoto = await getDownloadURL(data);
+    console.log(processedPhoto);
+    return processedPhoto;
+  };
+
+
+  const writeDataToFirestore = async () => {
+    try {
+      const userPhoto = await uploadPhotoToServer();
+
+      await addDoc(collection(db, "posts"), {
+...userPhoto
+      });
+
+      // console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
     }
   };
+
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Insufficient permissions!");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync();
+    if (!result.didCancel) {
+      setUserPhoto(result.assets[0].uri);
+    }
+
+    // let result = await ImagePicker.launchImageLibraryAsync({
+    //   mediaTypes: ImagePicker.MediaTypeOptions.All,
+    //   allowsEditing: true,
+    //   aspect: [4, 3],
+    //   quality: 1,
+    // });
+
+    // if (!result.canceled) {
+    //   setUserPhoto(result.assets[0].uri);
+    // }
+    writeDataToFirestore();
+  };
+
+
 
   const deletePhoto = () => {
     setUserPhoto(null);

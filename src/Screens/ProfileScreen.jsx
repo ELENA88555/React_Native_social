@@ -36,6 +36,9 @@ const ProfileScreen = () => {
   const dispatch = useDispatch();
   const email = useSelector(selectEmail);
   const userPhoto = useSelector(selectUserPhoto);
+  console.log(userPhoto,"Photo");
+
+
   const displayName = useSelector(selectNickName);
   const userId = useSelector(selectUserId);
 
@@ -82,6 +85,10 @@ const ProfileScreen = () => {
       setPhotoUri(null);
       return;
     }
+    // const result = await ImagePicker.launchImageLibraryAsync();
+    // if (!result.didCancel) {
+    //   setPhotoUri(result.assets[0].uri)
+    // }
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,

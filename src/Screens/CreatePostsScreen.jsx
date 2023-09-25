@@ -8,8 +8,8 @@ import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { View, Text } from "react-native";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../../firebase/config";
 import { collection, setDoc, addDoc } from "firebase/firestore";
+import { db, storage } from "../../firebase/config";
 import { selectNickName, selectUserId } from "../redux/auth/authSelector";
 import { useSelector } from "react-redux";
 
@@ -67,6 +67,8 @@ const CreatePostsScreen = ({ navigation }) => {
   const handleChangeMap = (value) => {
     setMapLocation(value);
   };
+
+  
   const uriToBlob = async (photo) => {
     return await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
